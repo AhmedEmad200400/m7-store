@@ -750,8 +750,24 @@ h1, h2, h3, h4, h5, h6 {
 @media (max-width: 768px) {
     .header-main {
         padding: var(--spacing-sm) var(--spacing-md);
+        flex-wrap: wrap;
     }
-    .main-navigation, .header-search {
+    .header-actions {
+        margin-left: auto;
+    }
+    .main-navigation {
+        width: 100%;
+        overflow-x: auto;
+        margin-top: var(--spacing-sm);
+        padding-bottom: 5px;
+    }
+    .main-navigation::-webkit-scrollbar {
+        display: none;
+    }
+    .main-navigation ul {
+        gap: 15px;
+    }
+    .header-search {
         display: none;
     }
     .mobile-bottom-nav {
