@@ -424,6 +424,11 @@ function loadProductDetails() {
     }
 }
 
+function selectSize(element) {
+    document.querySelectorAll('.size-btn').forEach(btn => btn.classList.remove('active'));
+    element.classList.add('active');
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     renderProducts();
