@@ -83,12 +83,12 @@ h1, h2, h3, h4, h5, h6 {
 .header-top {
     background: var(--color-primary);
     color: var(--color-secondary);
-    font-size: 12px;
+    font-size: 18px;
     text-align: center;
-    padding: var(--spacing-xs) 0;
-    font-weight: 500;
+    padding: var(--spacing-sm) 0;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
 }
 
 .header-main {
