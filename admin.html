@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>♦️𝑴7♦️ - Admin Dashboard</title>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="admin-layout">
+    
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <a href="index.html" class="admin-logo" style="text-decoration: none;">
+            ♦️𝑴<span>7</span>♦️
+        </a>
+        <nav class="admin-nav">
+            <ul>
+                <li class="active" onclick="switchAdminView('orders', this)"><i class="fa-solid fa-cart-arrow-down" style="width: 25px;"></i> Orders</li>
+                <li onclick="switchAdminView('customers', this)"><i class="fa-solid fa-users" style="width: 25px;"></i> Customers</li>
+                <li onclick="switchAdminView('products', this)"><i class="fa-solid fa-box" style="width: 25px;"></i> Products</li>
+            </ul>
+        </nav>
+        <div style="margin-top: auto;">
+            <a href="index.html" style="color: rgba(255,255,255,0.7); font-size: 14px; text-decoration: none;">
+                <i class="fa-solid fa-arrow-left"></i> Back to Store
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        
+        <!-- ORDERS VIEW -->
+        <div id="admin-view-orders">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-xl);">
+                <h2>Orders Database</h2>
+                <div class="header-search">
+                    <input type="text" placeholder="Search orders..." style="background: white;">
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Customer</th>
+                            <th>Items</th>
+                            <th>Total (EGP)</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-table-body">
+                        <!-- JS injected -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- CUSTOMERS VIEW -->
+        <div id="admin-view-customers" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-xl);">
+                <h2>Customers Database</h2>
+            </div>
+            <div class="admin-card">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone Number</th>
+                            <th>Address</th>
+                            <th>Total Orders</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customers-table-body">
+                        <!-- JS injected -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PRODUCTS VIEW -->
+        <div id="admin-view-products" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-xl);">
+                <h2>Products Database</h2>
+                <button class="btn-primary" style="width: auto; padding: 10px 20px;">+ Add Product</button>
+            </div>
+            <div class="admin-card">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Brand</th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Price (EGP)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="products-table-body">
+                        <!-- JS injected -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+</div>
+
+<!-- Admin JS -->
+<script src="js/main.js"></script>
+<script>
+    // Logic specific to Admin Dashboard
+    function switchAdminView(view, el) {
+        document.querySelectorAll('.admin-nav li').forEach(li => li.classList.remove('active'));
+        el.classList.add('active');
+
+        document.getElementById('admin-view-orders').style.display = 'none';
+        document.getElementById('admin-view-customers').style.display = 'none';
+        document.getElementById('admin-view-products').style.display = 'none';
+
+        document.getElementById(`admin-view-${view}`).style.display = 'block';
+    }
+
+    function renderAdminData() {
+        const storedOrders = JSON.parse(localStorage.getItem('m7_orders')) || [];
+        
+        // 1. Render Orders
+        const ordersBody = document.getElementById('orders-table-body');
+        if(storedOrders.length === 0) {
+            ordersBody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 20px;">No orders found.</td></tr>`;
+        } else {
+            ordersBody.innerHTML = '';
+            storedOrders.slice().reverse().forEach((order, i) => { // Reverse to show newest first
+                const statusClass = order.status === 'New' ? 'status-new' : 'status-completed';
+                ordersBody.innerHTML += `
+                    <tr>
+                        <td style="font-weight: 600;">${order.id}</td>
+                        <td>${order.date}</td>
+                        <td>
+                            <div>${order.customer.name}</div>
+                            <div style="font-size: 12px; color: var(--color-gray-dark);">${order.customer.phone}</div>
+                        </td>
+                        <td>${order.items.length} items</td>
+                        <td style="font-weight: 700;">EGP ${order.total}</td>
+                        <td><span class="status-badge ${statusClass}">${order.status}</span></td>
+                        <td>
+                            <button onclick="markCompleted(${storedOrders.length - 1 - i})" style="border: 1px solid var(--color-gray-medium); background: white; padding: 4px 8px; border-radius: 4px; cursor: pointer;">
+                                Mark Done
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // 2. Render Customers (Extract unique customers from orders)
+        const customersBody = document.getElementById('customers-table-body');
+        const customerMap = {};
+        storedOrders.forEach(order => {
+            const phone = order.customer.phone;
+            if(!customerMap[phone]) {
+                customerMap[phone] = {
+                    name: order.customer.name,
+                    phone: phone,
+                    address: order.customer.address,
+                    orderCount: 1
+                };
+            } else {
+                customerMap[phone].orderCount++;
+            }
+        });
+        
+        const uniqueCustomers = Object.values(customerMap);
+        if(uniqueCustomers.length === 0) {
+            customersBody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 20px;">No customers found.</td></tr>`;
+        } else {
+            customersBody.innerHTML = '';
+            uniqueCustomers.forEach(c => {
+                customersBody.innerHTML += `
+                    <tr>
+                        <td style="font-weight: 600;">${c.name}</td>
+                        <td>${c.phone}</td>
+                        <td>${c.address}</td>
+                        <td>${c.orderCount} order(s)</td>
+                    </tr>
+                `;
+            });
+        }
+
+        // 3. Render Products (from main.js mockProducts)
+        const productsBody = document.getElementById('products-table-body');
+        productsBody.innerHTML = '';
+        mockProducts.forEach(p => {
+            productsBody.innerHTML += `
+                <tr>
+                    <td><img src="${p.image}" alt="${p.title}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;"></td>
+                    <td style="font-weight: 600;">${p.brand}</td>
+                    <td>${p.title}</td>
+                    <td style="text-transform: capitalize;">${p.category}</td>
+                    <td>EGP ${p.price}</td>
+                </tr>
+            `;
+        });
+    }
+
+    function markCompleted(index) {
+        let storedOrders = JSON.parse(localStorage.getItem('m7_orders')) || [];
+        if(storedOrders[index]) {
+            storedOrders[index].status = 'Completed';
+            localStorage.setItem('m7_orders', JSON.stringify(storedOrders));
+            renderAdminData();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', renderAdminData);
+</script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>♦️𝑴7♦️ - Fashion Store</title>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+    <div class="header-top">
+        Free Shipping on Orders over 500 EGP | 14-Day Free Returns
+    </div>
+    <div class="header-main">
+        <a href="index.html" class="site-logo">
+            ♦️𝑴<span>7</span>♦️
+        </a>
+
+        <nav class="main-navigation">
+            <ul>
+                <li><a href="index.html?category=women">Women</a></li>
+                <li><a href="index.html?category=men">Men</a></li>
+                <li><a href="index.html?category=kids">Kids</a></li>
+                <li><a href="index.html?category=beauty">Beauty</a></li>
+                <li><a href="index.html?category=sports">Sports</a></li>
+                <li><a href="index.html?category=sale" style="color: var(--color-accent);">Sale</a></li>
+            </ul>
+        </nav>
+
+        <div class="header-actions">
+            <div class="header-search">
+                <input type="text" placeholder="Search for products, brands...">
+                <i class="fa-solid fa-magnifying-glass" style="position: absolute; right: 15px; top: 12px; color: var(--color-gray-dark);"></i>
+            </div>
+            <div class="action-icon" onclick="toggleWishlistPanel()">
+                <i class="fa-regular fa-heart"></i>
+                <span class="wishlist-count">0</span>
+            </div>
+            <div class="action-icon" onclick="toggleCart()" style="position: relative;">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <span class="cart-count">0</span>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="site-main">
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070&auto=format&fit=crop" alt="Fashion Banner">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title" id="hero-title">The Big Summer Sale</h1>
+            <p style="font-size: 18px; margin-bottom: 24px; font-weight: 500;" id="hero-subtitle">Up to 70% off on top brands. Exclusive to ♦️𝑴7♦️</p>
+            <button class="btn-primary" onclick="window.scrollTo(0, 500)" style="width: auto;">Shop Now</button>
+        </div>
+    </section>
+
+    <!-- Top Brands / Categories -->
+    <div style="text-align: center; margin-top: var(--spacing-xl);">
+        <p style="text-transform: uppercase; letter-spacing: 2px; font-weight: 700; color: var(--color-gray-dark); font-size: 14px;">Explore Collection</p>
+    </div>
+    
+    <h2 class="section-title">New Arrivals</h2>
+
+    <!-- Dynamic JS Product Grid -->
+    <section class="product-grid" id="dynamic-product-grid">
+        <p style="text-align: center; width: 100%; padding: 40px;">Loading latest fashion trends...</p>
+    </section>
+
+</main>
+
+<nav class="mobile-bottom-nav">
+    <ul>
+        <li>
+            <a href="index.html">
+                <i class="fa-solid fa-house"></i>
+                Home
+            </a>
+        </li>
+        <li>
+            <a href="index.html?category=sale">
+                <i class="fa-solid fa-tag"></i>
+                Sale
+            </a>
+        </li>
+        <li>
+            <a onclick="toggleWishlistPanel()">
+                <i class="fa-regular fa-heart"></i>
+                Wishlist
+            </a>
+        </li>
+        <li>
+            <a onclick="toggleCart()">
+                <i class="fa-solid fa-bag-shopping"></i>
+                Bag
+            </a>
+        </li>
+        <li>
+            <a href="admin.html">
+                <i class="fa-solid fa-chart-line"></i>
+                Admin
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<!-- Slide-Out Cart Overlay & Panel -->
+<div class="side-panel-overlay" id="cart-overlay" onclick="toggleCart()"></div>
+<div class="side-panel" id="cart-panel">
+    <div class="side-panel-header">
+        <h2>Your Bag</h2>
+        <div class="side-panel-close" onclick="toggleCart()">&times;</div>
+    </div>
+    
+    <!-- Cart Items View -->
+    <div id="cart-view-items">
+        <div class="side-panel-items" id="cart-items-container">
+            <!-- JS injects cart items here -->
+        </div>
+        <div class="side-panel-footer">
+            <div class="cart-total">
+                <span>Subtotal</span>
+                <span id="cart-total-price">EGP 0</span>
+            </div>
+            <button class="btn-primary" style="width: 100%;" onclick="showCheckoutForm()">PROCEED TO CHECKOUT</button>
+        </div>
+    </div>
+
+    <!-- Manual Checkout Form View -->
+    <div id="cart-view-checkout" style="display: none; height: 100%; flex-direction: column;">
+        <div class="side-panel-items" style="padding: var(--spacing-lg);">
+            <h3 style="margin-bottom: var(--spacing-md);">Delivery Details</h3>
+            <form id="manual-checkout-form" onsubmit="submitOrder(event)">
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">Full Name</label>
+                    <input type="text" id="checkout-name" required style="width: 100%; padding: 10px; border: 1px solid var(--color-gray-medium); border-radius: 4px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">Phone Number</label>
+                    <input type="tel" id="checkout-phone" required style="width: 100%; padding: 10px; border: 1px solid var(--color-gray-medium); border-radius: 4px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">Delivery Address</label>
+                    <textarea id="checkout-address" rows="3" required style="width: 100%; padding: 10px; border: 1px solid var(--color-gray-medium); border-radius: 4px;"></textarea>
+                </div>
+                <p style="font-size: 12px; color: var(--color-gray-dark); margin-top: 10px;">Payment is Cash on Delivery.</p>
+            </form>
+        </div>
+        <div class="side-panel-footer">
+            <button class="btn-primary" style="width: 100%;" onclick="document.getElementById('manual-checkout-form').requestSubmit()">PLACE ORDER</button>
+            <button class="btn-secondary" style="width: 100%; margin-top: 10px;" onclick="hideCheckoutForm()">Back to Bag</button>
+        </div>
+    </div>
+</div>
+
+<!-- Slide-Out Wishlist Panel -->
+<div class="side-panel-overlay" id="wishlist-overlay" onclick="toggleWishlistPanel()"></div>
+<div class="side-panel" id="wishlist-panel">
+    <div class="side-panel-header">
+        <h2>Your Wishlist</h2>
+        <div class="side-panel-close" onclick="toggleWishlistPanel()">&times;</div>
+    </div>
+    <div class="side-panel-items" id="wishlist-items-container">
+        <!-- JS injects wishlist items here -->
+    </div>
+</div>
+
+<!-- Custom JS -->
+<script src="js/main.js"></script>
+</body>
+</html>
