@@ -751,9 +751,14 @@ h1, h2, h3, h4, h5, h6 {
     .header-main {
         padding: var(--spacing-sm) var(--spacing-md);
         flex-wrap: wrap;
+        position: relative;
+        justify-content: center;
     }
     .header-actions {
-        margin-left: auto;
+        position: absolute;
+        right: var(--spacing-md);
+        top: 16px;
+        margin-left: 0;
     }
     .main-navigation {
         width: 100%;
