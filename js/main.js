@@ -9,7 +9,6 @@ const mockProducts = [
     // MEN
     { id: 2, category: 'men', brand: "NIKE", title: "Air Force 1 '07 Sneakers", price: 4990, oldPrice: null, image: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?q=80&w=1000&auto=format&fit=crop", badge: "NEW" },
     { id: 7, category: 'men', brand: "TOMMY HILFIGER", title: "Logo Print T-Shirt", price: 1200, oldPrice: null, image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?q=80&w=1000&auto=format&fit=crop", badge: null },
-    { id: 10, category: 'men', brand: "HUGO BOSS", title: "Tailored Slim Fit Suit", price: 12000, oldPrice: 15000, image: "https://images.unsplash.com/photo-1594938298596-70f56fb41f13?q=80&w=1000&auto=format&fit=crop", badge: "-20%" },
 
     // KIDS
     { id: 9, category: 'kids', brand: "MOTHERCARE", title: "Printed Cotton Pajamas", price: 650, oldPrice: null, image: "https://images.unsplash.com/photo-1519272365922-0a1501c6fc82?q=80&w=1000&auto=format&fit=crop", badge: "NEW" },
