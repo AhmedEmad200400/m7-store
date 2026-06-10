@@ -166,7 +166,7 @@ async function submitOrder(e) {
     let itemsString = cartItems.map(item => `${item.title} (EGP ${item.price})`).join(', ');
     
     // Format sizes into a comma-separated string for the new Google Sheets column
-    let sizesString = cartItems.map(item => item.size || 'N/A').join(', ');
+    let sizesString = cartItems.map(item => `Size: ${item.size || 'N/A'}`).join(', ');
 
     const order = {
         id: "ORD-" + Math.floor(Math.random() * 1000000),
