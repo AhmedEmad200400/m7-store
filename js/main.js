@@ -20,7 +20,6 @@ const mockProducts = [
     { id: 14, categories: ['beauty', 'women'], brand: "MAC", title: "Matte Lipstick - Ruby Woo", price: 1100, oldPrice: 1400, image: "https://images.unsplash.com/photo-1586495777744-4413f21062fa?q=80&w=1000&auto=format&fit=crop", badge: "-21%" },
 
     // SPORTS
-    { id: 5, categories: ['sports', 'men'], brand: "ADIDAS", title: "Essentials French Terry Hoodie", price: 1800, oldPrice: 2250, image: "https://images.unsplash.com/photo-1608228079968-c7681ea88d75?q=80&w=1000&auto=format&fit=crop", badge: "-20%" },
     { id: 6, categories: ['sports', 'men', 'women'], brand: "PUMA", title: "Classic Suede Sneakers", price: 2100, oldPrice: 3000, image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?q=80&w=1000&auto=format&fit=crop", badge: "-30%" },
     { id: 15, categories: ['sports', 'women'], brand: "UNDER ARMOUR", title: "HeatGear Compression Leggings", price: 1900, oldPrice: null, image: "https://images.unsplash.com/photo-1506152983158-b4a74a01c721?q=80&w=1000&auto=format&fit=crop", badge: "NEW" },
     
