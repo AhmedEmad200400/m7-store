@@ -81,7 +81,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .header-top {
-    background: var(--color-primary);
+    background: var(--color-accent);
     color: var(--color-secondary);
     font-size: 18px;
     text-align: center;
@@ -421,7 +421,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn-primary {
     display: inline-block;
-    background: var(--color-primary);
+    background: var(--color-accent);
     color: var(--color-secondary);
     padding: 14px 32px;
     font-size: 14px;
@@ -635,8 +635,8 @@ h1, h2, h3, h4, h5, h6 {
     transition: all var(--transition-fast);
 }
 .size-btn:hover, .size-btn.active {
-    border-color: var(--color-primary);
-    background: var(--color-primary);
+    border-color: var(--color-accent);
+    background: var(--color-accent);
     color: var(--color-secondary);
 }
 
