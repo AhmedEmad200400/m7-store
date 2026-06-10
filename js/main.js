@@ -61,7 +61,7 @@ function updateCartUI() {
                         <img src="${item.image}" alt="${item.title}" class="cart-item-img">
                         <div class="cart-item-info">
                             <div class="cart-item-brand">${item.brand}</div>
-                            <div class="cart-item-title">${item.title}</div>
+                            <div class="cart-item-title">${item.title} ${item.size ? `<strong style="color:var(--color-accent);">(Size: ${item.size})</strong>` : ''}</div>
                             <div class="cart-item-price">EGP ${item.price}</div>
                             <span class="cart-item-remove" onclick="removeFromCart(${index})">Remove</span>
                         </div>
@@ -84,8 +84,21 @@ function addToCart(productId) {
         const urlParams = new URLSearchParams(window.location.search);
         pId = urlParams.get('id');
     }
-    const product = mockProducts.find(p => p.id == pId);
-    if (product) {
+    const baseProduct = mockProducts.find(p => p.id == pId);
+    if (baseProduct) {
+        // Create a copy of the product so we can attach unique sizes
+        const product = JSON.parse(JSON.stringify(baseProduct));
+        
+        // If adding from product page, require and grab the size
+        if (!productId) {
+            const activeSizeBtn = document.querySelector('.size-btn.active');
+            if (activeSizeBtn) {
+                product.size = activeSizeBtn.innerText;
+            } else {
+                return alert("Please select a size before adding to bag!");
+            }
+        }
+
         cartItems.push(product);
         saveCart();
         toggleCart(true);
@@ -151,12 +164,16 @@ async function submitOrder(e) {
 
     // Format items into a readable string for the spreadsheet
     let itemsString = cartItems.map(item => `${item.title} (EGP ${item.price})`).join(', ');
+    
+    // Format sizes into a comma-separated string for the new Google Sheets column
+    let sizesString = cartItems.map(item => item.size || 'N/A').join(', ');
 
     const order = {
         id: "ORD-" + Math.floor(Math.random() * 1000000),
         date: new Date().toLocaleDateString(),
         customer: { name, phone, address },
         items: [...cartItems],
+        sizes: sizesString,
         total: total,
         status: "New"
     };
@@ -174,6 +191,7 @@ async function submitOrder(e) {
             phone: phone,
             address: address,
             items: itemsString,
+            sizes: sizesString,
             total: total
         };
 
