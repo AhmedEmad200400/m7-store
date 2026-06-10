@@ -2,30 +2,30 @@
 
 const mockProducts = [
     // WOMEN
-    { id: 1, category: 'women', brand: "MANGO", title: "Pleated Midi Dress with Belt", price: 1450, oldPrice: 2100, image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1000&auto=format&fit=crop", badge: "-30%" },
-    { id: 4, category: 'women', brand: "CALVIN KLEIN", title: "Monogram Crossbody Bag", price: 2990, oldPrice: null, image: "https://images.unsplash.com/photo-1485968579580-b6d095142e6e?q=80&w=1000&auto=format&fit=crop", badge: null },
-    { id: 8, category: 'women', brand: "ALDO", title: "Stiletto Heel Pumps", price: 2500, oldPrice: null, image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=1000&auto=format&fit=crop", badge: "NEW" },
+    { id: 1, categories: ['women'], brand: "MANGO", title: "Pleated Midi Dress with Belt", price: 1450, oldPrice: 2100, image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1000&auto=format&fit=crop", badge: "-30%" },
+    { id: 4, categories: ['women'], brand: "CALVIN KLEIN", title: "Monogram Crossbody Bag", price: 2990, oldPrice: null, image: "https://images.unsplash.com/photo-1485968579580-b6d095142e6e?q=80&w=1000&auto=format&fit=crop", badge: null },
+    { id: 8, categories: ['women'], brand: "ALDO", title: "Stiletto Heel Pumps", price: 2500, oldPrice: null, image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=1000&auto=format&fit=crop", badge: "NEW" },
     
     // MEN
-    { id: 2, category: 'men', brand: "NIKE", title: "Air Force 1 '07 Sneakers", price: 4990, oldPrice: null, image: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?q=80&w=1000&auto=format&fit=crop", badge: "NEW" },
-    { id: 7, category: 'men', brand: "TOMMY HILFIGER", title: "Logo Print T-Shirt", price: 1200, oldPrice: null, image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?q=80&w=1000&auto=format&fit=crop", badge: null },
+    { id: 2, categories: ['men', 'sports'], brand: "NIKE", title: "Air Force 1 '07 Sneakers", price: 4990, oldPrice: null, image: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?q=80&w=1000&auto=format&fit=crop", badge: "NEW" },
+    { id: 7, categories: ['men'], brand: "TOMMY HILFIGER", title: "Logo Print T-Shirt", price: 1200, oldPrice: null, image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?q=80&w=1000&auto=format&fit=crop", badge: null },
 
     // KIDS
-    { id: 9, category: 'kids', brand: "MOTHERCARE", title: "Printed Cotton Pajamas", price: 650, oldPrice: null, image: "https://images.unsplash.com/photo-1519272365922-0a1501c6fc82?q=80&w=1000&auto=format&fit=crop", badge: "NEW" },
-    { id: 11, category: 'kids', brand: "GAP KIDS", title: "Denim Overalls", price: 1400, oldPrice: 1900, image: "https://images.unsplash.com/photo-1519689680058-324335c77eba?q=80&w=1000&auto=format&fit=crop", badge: "-26%" },
-    { id: 12, category: 'kids', brand: "ADIDAS", title: "Kids Stan Smith Sneakers", price: 2500, oldPrice: null, image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?q=80&w=1000&auto=format&fit=crop", badge: null },
+    { id: 9, categories: ['kids'], brand: "MOTHERCARE", title: "Printed Cotton Pajamas", price: 650, oldPrice: null, image: "https://images.unsplash.com/photo-1519272365922-0a1501c6fc82?q=80&w=1000&auto=format&fit=crop", badge: "NEW" },
+    { id: 11, categories: ['kids'], brand: "GAP KIDS", title: "Denim Overalls", price: 1400, oldPrice: 1900, image: "https://images.unsplash.com/photo-1519689680058-324335c77eba?q=80&w=1000&auto=format&fit=crop", badge: "-26%" },
+    { id: 12, categories: ['kids', 'sports'], brand: "ADIDAS", title: "Kids Stan Smith Sneakers", price: 2500, oldPrice: null, image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?q=80&w=1000&auto=format&fit=crop", badge: null },
 
     // BEAUTY
-    { id: 13, category: 'beauty', brand: "DIOR", title: "Sauvage Eau De Parfum 100ml", price: 5800, oldPrice: null, image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=1000&auto=format&fit=crop", badge: "BESTSELLER" },
-    { id: 14, category: 'beauty', brand: "MAC", title: "Matte Lipstick - Ruby Woo", price: 1100, oldPrice: 1400, image: "https://images.unsplash.com/photo-1586495777744-4413f21062fa?q=80&w=1000&auto=format&fit=crop", badge: "-21%" },
+    { id: 13, categories: ['beauty', 'men'], brand: "DIOR", title: "Sauvage Eau De Parfum 100ml", price: 5800, oldPrice: null, image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=1000&auto=format&fit=crop", badge: "BESTSELLER" },
+    { id: 14, categories: ['beauty', 'women'], brand: "MAC", title: "Matte Lipstick - Ruby Woo", price: 1100, oldPrice: 1400, image: "https://images.unsplash.com/photo-1586495777744-4413f21062fa?q=80&w=1000&auto=format&fit=crop", badge: "-21%" },
 
     // SPORTS
-    { id: 5, category: 'sports', brand: "ADIDAS", title: "Essentials French Terry Hoodie", price: 1800, oldPrice: 2250, image: "https://images.unsplash.com/photo-1608228079968-c7681ea88d75?q=80&w=1000&auto=format&fit=crop", badge: "-20%" },
-    { id: 6, category: 'sports', brand: "PUMA", title: "Classic Suede Sneakers", price: 2100, oldPrice: 3000, image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?q=80&w=1000&auto=format&fit=crop", badge: "-30%" },
-    { id: 15, category: 'sports', brand: "UNDER ARMOUR", title: "HeatGear Compression Leggings", price: 1900, oldPrice: null, image: "https://images.unsplash.com/photo-1506152983158-b4a74a01c721?q=80&w=1000&auto=format&fit=crop", badge: "NEW" },
+    { id: 5, categories: ['sports', 'men'], brand: "ADIDAS", title: "Essentials French Terry Hoodie", price: 1800, oldPrice: 2250, image: "https://images.unsplash.com/photo-1608228079968-c7681ea88d75?q=80&w=1000&auto=format&fit=crop", badge: "-20%" },
+    { id: 6, categories: ['sports', 'men', 'women'], brand: "PUMA", title: "Classic Suede Sneakers", price: 2100, oldPrice: 3000, image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?q=80&w=1000&auto=format&fit=crop", badge: "-30%" },
+    { id: 15, categories: ['sports', 'women'], brand: "UNDER ARMOUR", title: "HeatGear Compression Leggings", price: 1900, oldPrice: null, image: "https://images.unsplash.com/photo-1506152983158-b4a74a01c721?q=80&w=1000&auto=format&fit=crop", badge: "NEW" },
     
     // MIXED FOR ALL/DEFAULT
-    { id: 3, category: 'women', brand: "GINGER", title: "Ribbed Long Sleeve Top", price: 450, oldPrice: 900, image: "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?q=80&w=1000&auto=format&fit=crop", badge: "-50%" },
+    { id: 3, categories: ['women'], brand: "GINGER", title: "Ribbed Long Sleeve Top", price: 450, oldPrice: 900, image: "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?q=80&w=1000&auto=format&fit=crop", badge: "-50%" },
 ];
 
 // Global State
@@ -339,15 +339,22 @@ function renderProducts() {
     let filteredProducts = mockProducts;
 
     if (category) {
+        const sectionTitle = document.querySelector('.section-title');
+        
         if (category === 'sale') {
             filteredProducts = mockProducts.filter(p => p.oldPrice !== null);
             if (heroTitle) heroTitle.innerText = "The Big Summer Sale";
             if (heroSubtitle) heroSubtitle.innerText = "Up to 70% off. Exclusive to ♦️𝑴7♦️";
+            if (sectionTitle) sectionTitle.innerText = "Sale Items";
         } else {
-            filteredProducts = mockProducts.filter(p => p.category === category);
+            filteredProducts = mockProducts.filter(p => p.categories && p.categories.includes(category));
             if (heroTitle) heroTitle.innerText = `${category.toUpperCase()} COLLECTION`;
             if (heroSubtitle) heroSubtitle.innerText = `Explore the latest trends in ${category} fashion.`;
+            if (sectionTitle) sectionTitle.innerText = `${category.toUpperCase()} PRODUCTS`;
         }
+    } else {
+        const sectionTitle = document.querySelector('.section-title');
+        if (sectionTitle) sectionTitle.innerText = "New Arrivals";
     }
 
     grid.innerHTML = ''; 

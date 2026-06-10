@@ -206,7 +206,7 @@
                     <td><img src="${p.image}" alt="${p.title}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;"></td>
                     <td style="font-weight: 600;">${p.brand}</td>
                     <td>${p.title}</td>
-                    <td style="text-transform: capitalize;">${p.category}</td>
+                    <td style="text-transform: capitalize;">${p.categories ? p.categories.join(', ') : p.category}</td>
                     <td>EGP ${p.price}</td>
                 </tr>
             `;
