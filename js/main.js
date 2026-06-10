@@ -162,11 +162,30 @@ async function submitOrder(e) {
     
     let total = cartItems.reduce((sum, item) => sum + item.price, 0);
 
+    // Group identical items to prevent typing the name twice
+    let groupedItems = {};
+    cartItems.forEach(item => {
+        let key = item.id + "_" + (item.size || 'N/A');
+        if (!groupedItems[key]) {
+            groupedItems[key] = { ...item, quantity: 1, unitPrice: item.price };
+        } else {
+            groupedItems[key].quantity++;
+            groupedItems[key].price += item.unitPrice;
+        }
+    });
+    let groupedArray = Object.values(groupedItems);
+
     // Format items into a readable string for the spreadsheet
-    let itemsString = cartItems.map(item => `${item.title} (EGP ${item.price})`).join(', ');
+    let itemsString = groupedArray.map(item => {
+        if (item.quantity > 1) {
+            return `${item.title} x${item.quantity} (EGP ${item.price})`;
+        } else {
+            return `${item.title} (EGP ${item.price})`;
+        }
+    }).join(', ');
     
     // Format sizes into a comma-separated string for the new Google Sheets column
-    let sizesString = cartItems.map(item => item.size || 'N/A').join(', ');
+    let sizesString = groupedArray.map(item => item.size || 'N/A').join(', ');
 
     const order = {
         id: "ORD-" + Math.floor(Math.random() * 1000000),
