@@ -552,8 +552,32 @@ function selectColor(element) {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
+    adaptToDeviceScreen();
     renderProducts();
     loadProductDetails();
     updateCartUI(); 
     updateWishlistUI();
 });
+
+// ==========================================
+// DEVICE & SCREEN RECOGNITION (PHONE VS COMPUTER)
+// ==========================================
+function adaptToDeviceScreen() {
+    const width = window.innerWidth;
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const isPhone = width <= 768 || (width <= 1024 && isTouch && window.innerHeight > window.innerWidth);
+    
+    document.documentElement.classList.remove('is-phone', 'is-computer');
+    document.body.classList.remove('is-phone', 'is-computer');
+
+    if (isPhone) {
+        document.documentElement.classList.add('is-phone');
+        document.body.classList.add('is-phone');
+    } else {
+        document.documentElement.classList.add('is-computer');
+        document.body.classList.add('is-computer');
+    }
+}
+
+window.addEventListener('resize', adaptToDeviceScreen);
+window.addEventListener('orientationchange', adaptToDeviceScreen);
