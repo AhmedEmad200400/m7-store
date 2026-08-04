@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>♦️𝑴7♦️ | Admin Dashboard</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css?v=21">
+    <style>
+        .admin-wrapper {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .login-box {
+            max-width: 420px;
+            margin: 80px auto;
+            background: #3d0912;
+            border: 1px solid var(--color-gray-medium);
+            padding: 36px;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .form-row {
+            margin-bottom: 20px;
+        }
+        .form-row label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-gray-dark);
+        }
+        .form-row input, .form-row select {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .admin-panel-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.6fr;
+            gap: 32px;
+            margin-top: 24px;
+        }
+        @media (max-width: 900px) {
+            .admin-panel-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .admin-box {
+            background: #3d0912;
+            border: 1px solid var(--color-gray-medium);
+            padding: 24px;
+            border-radius: 8px;
+        }
+        .admin-box h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--color-gray-medium);
+            padding-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .catalog-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .catalog-table th, .catalog-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--color-gray-medium);
+            vertical-align: middle;
+        }
+        .catalog-table th {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--color-gray-dark);
+        }
+        .color-chip {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #6c1321;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-right: 4px;
+            margin-bottom: 4px;
+        }
+        .btn-delete {
+            background: #6c1321;
+            color: #ffffff;
+            border: 1px solid #D40000;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        .btn-delete:hover {
+            background: #D40000;
+        }
+        .error-msg {
+            color: #ff6b6b;
+            font-size: 13px;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="header-main" style="max-width: 1200px;">
+        <a href="index.html" class="site-logo">♦️𝑴7♦️ <span style="font-size: 18px; font-weight: 500; color: var(--color-gray-dark);">ADMIN</span></a>
+        <div style="display: flex; gap: 16px; align-items: center;">
+            <a href="index.html" style="font-size: 14px; font-weight: 600;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Live Store</a>
+            <button id="logout-btn" onclick="adminLogout()" style="display: none; background: #6c1321; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: 600;"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+        </div>
+    </div>
+</header>
+
+<div class="admin-wrapper">
+
+    <!-- LOGIN VIEW -->
+    <div id="admin-login-view" style="display: none;">
+        <div class="login-box">
+            <div style="text-align: center; margin-bottom: 24px;">
+                <h1 style="font-size: 24px; margin-bottom: 6px;">Admin Authentication</h1>
+                <p style="font-size: 13px; color: var(--color-gray-dark);">Enter credentials to access catalog management</p>
+            </div>
+
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <div class="form-row">
+                    <label>Email Address or Username</label>
+                    <input type="text" id="login-email" placeholder="admin" required autocomplete="off">
+                </div>
+                <div class="form-row">
+                    <label>Password</label>
+                    <input type="password" id="login-password" placeholder="admin" required autocomplete="off">
+                </div>
+                <div id="login-error" class="error-msg">Invalid credentials! Please enter 'admin' for both email and password.</div>
+                <button type="submit" class="btn-primary" style="margin-top: 10px;"><i class="fa-solid fa-lock-open"></i> SIGN IN TO ADMIN</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <div id="admin-dashboard-view" style="display: none;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <div>
+                <h1 style="font-size: 26px;">Store Catalog Manager</h1>
+                <p style="color: var(--color-gray-dark); font-size: 14px;">Add new products, set prices, assign available colors, and manage your inventory.</p>
+            </div>
+            <div>
+                <button onclick="resetAllDefaults()" style="background: transparent; color: var(--color-gray-dark); border: 1px solid var(--color-gray-medium); padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">Reset Catalog to Defaults</button>
+            </div>
+        </div>
+
+        <div class="admin-panel-grid">
+            
+            <!-- ADD PRODUCT FORM -->
+            <div class="admin-box">
+                <h2><i class="fa-solid fa-circle-plus"></i> Add New Product</h2>
+                
+                <form id="add-product-form" onsubmit="handleAddProduct(event)">
+                    <div class="form-row">
+                        <label>Category *</label>
+                        <select id="prod-category" required>
+                            <option value="women">Women</option>
+                            <option value="men">Men</option>
+                            <option value="kids">Kids</option>
+                            <option value="perfumes">Perfumes</option>
+                            <option value="accessories">Accessories</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <label>Product Title / Name *</label>
+                        <input type="text" id="prod-title" placeholder="e.g. Oversized Hoodie with Logo" required>
+                    </div>
+
+                    <div class="form-row">
+                        <label>Brand Name *</label>
+                        <input type="text" id="prod-brand" placeholder="e.g. ♦️𝑴7♦️ or NIKE" required value="♦️𝑴7♦️">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div class="form-row">
+                            <label>Price (EGP) *</label>
+                            <input type="number" id="prod-price" placeholder="450" required min="1" step="1">
+                        </div>
+                        <div class="form-row">
+                            <label>Old Price (EGP) (Optional)</label>
+                            <input type="number" id="prod-old-price" placeholder="600" min="1" step="1">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <label>Available Colors * (Comma separated)</label>
+                        <input type="text" id="prod-colors" placeholder="e.g. Black, Burgundy, White, Red" required>
+                        <small style="color: var(--color-gray-dark); font-size: 11px; display: block; margin-top: 4px;">Customers will be able to select from these colors.</small>
+                    </div>
+
+                    <div class="form-row">
+                        <label>Image URL or Path *</label>
+                        <input type="text" id="prod-image" placeholder="e.g. images/men-tshirt-believe.png or https://..." required>
+                        <small style="color: var(--color-gray-dark); font-size: 11px; display: block; margin-top: 4px;">You can use an image path like <code>images/men-tshirt-believe.png</code> or any web image link.</small>
+                    </div>
+
+                    <div class="form-row">
+                        <label>Badge Tag (Optional)</label>
+                        <input type="text" id="prod-badge" placeholder="e.g. NEW or -25%">
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="margin-top: 10px;"><i class="fa-solid fa-plus"></i> PUBLISH PRODUCT</button>
+                </form>
+            </div>
+
+            <!-- EXISTING PRODUCTS TABLE -->
+            <div class="admin-box">
+                <h2><span><i class="fa-solid fa-list"></i> Live Website Products</span> <span id="catalog-count" style="font-size: 14px; font-weight: normal; color: var(--color-gray-dark);"></span></h2>
+                
+                <div style="overflow-x: auto;">
+                    <table class="catalog-table">
+                        <thead>
+                            <tr>
+                                <th>Img</th>
+                                <th>Product Details</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Available Colors</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="catalog-tbody">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- Custom JS -->
+<script src="js/main.js?v=21"></script>
+<script>
+    // Authentication Check on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        checkAdminAuth();
+        renderCatalogTable();
+    });
+
+    function checkAdminAuth() {
+        const isLoggedIn = localStorage.getItem('m7_admin_logged_in') === 'true';
+        const loginView = document.getElementById('admin-login-view');
+        const dashView = document.getElementById('admin-dashboard-view');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        if (isLoggedIn) {
+            loginView.style.display = 'none';
+            dashView.style.display = 'block';
+            if (logoutBtn) logoutBtn.style.display = 'inline-block';
+        } else {
+            loginView.style.display = 'block';
+            dashView.style.display = 'none';
+            if (logoutBtn) logoutBtn.style.display = 'none';
+        }
+    }
+
+    function handleLogin(event) {
+        event.preventDefault();
+        const email = document.getElementById('login-email').value.trim().toLowerCase();
+        const pass = document.getElementById('login-password').value.trim();
+        const errorEl = document.getElementById('login-error');
+
+        if ((email === 'admin' || email === 'admin@admin.com') && pass === 'admin') {
+            errorEl.style.display = 'none';
+            localStorage.setItem('m7_admin_logged_in', 'true');
+            checkAdminAuth();
+            renderCatalogTable();
+        } else {
+            errorEl.style.display = 'block';
+        }
+    }
+
+    function adminLogout() {
+        localStorage.removeItem('m7_admin_logged_in');
+        checkAdminAuth();
+    }
+
+    function handleAddProduct(event) {
+        event.preventDefault();
+        
+        const category = document.getElementById('prod-category').value;
+        const title = document.getElementById('prod-title').value.trim();
+        const brand = document.getElementById('prod-brand').value.trim();
+        const price = parseFloat(document.getElementById('prod-price').value);
+        const oldPriceVal = document.getElementById('prod-old-price').value;
+        const oldPrice = oldPriceVal ? parseFloat(oldPriceVal) : null;
+        const colorsStr = document.getElementById('prod-colors').value.trim();
+        const image = document.getElementById('prod-image').value.trim();
+        const badge = document.getElementById('prod-badge').value.trim() || null;
+
+        const colors = colorsStr.split(',').map(c => c.trim()).filter(Boolean);
+
+        const newProduct = {
+            id: Date.now(),
+            categories: [category],
+            brand: brand,
+            title: title,
+            price: price,
+            oldPrice: oldPrice,
+            image: image,
+            badge: badge,
+            colors: colors
+        };
+
+        const customProducts = JSON.parse(localStorage.getItem('m7_custom_products')) || [];
+        customProducts.unshift(newProduct);
+        localStorage.setItem('m7_custom_products', JSON.stringify(customProducts));
+
+        // Also add to active in-memory mockProducts
+        mockProducts.unshift(newProduct);
+
+        alert(`✓ "${title}" has been added to your store!`);
+        document.getElementById('add-product-form').reset();
+        document.getElementById('prod-brand').value = "♦️𝑴7♦️";
+        
+        renderCatalogTable();
+    }
+
+    function renderCatalogTable() {
+        const tbody = document.getElementById('catalog-tbody');
+        const countEl = document.getElementById('catalog-count');
+        if (!tbody) return;
+
+        tbody.innerHTML = '';
+        if (countEl) countEl.innerText = `(${mockProducts.length} items)`;
+
+        mockProducts.forEach(prod => {
+            const tr = document.createElement('tr');
+            
+            const categoryBadge = prod.categories ? prod.categories.map(c => `<span style="text-transform: uppercase; font-size: 11px; font-weight: 700; background: #2a050d; padding: 2px 6px; border-radius: 4px;">${c}</span>`).join(' ') : 'GENERAL';
+            
+            const colorsHtml = prod.colors && prod.colors.length > 0 ? prod.colors.map(c => `<span class="color-chip">${c}</span>`).join('') : '<span style="color: var(--color-gray-dark); font-size: 11px;">Standard</span>';
+
+            tr.innerHTML = `
+                <td>
+                    <img src="${prod.image}" alt="thumb" style="width: 44px; height: 56px; object-fit: cover; border-radius: 4px; border: 1px solid var(--color-gray-medium);">
+                </td>
+                <td>
+                    <div style="font-weight: 700;">${prod.title}</div>
+                    <div style="font-size: 12px; color: var(--color-gray-dark);">${prod.brand}</div>
+                </td>
+                <td>${categoryBadge}</td>
+                <td>
+                    <div style="font-weight: 700;">EGP ${prod.price}</div>
+                    ${prod.oldPrice ? `<div style="text-decoration: line-through; font-size: 12px; color: var(--color-gray-dark);">EGP ${prod.oldPrice}</div>` : ''}
+                </td>
+                <td>${colorsHtml}</td>
+                <td>
+                    <button class="btn-delete" onclick="deleteProduct(${prod.id}, '${prod.title.replace(/'/g, "\\'")}')"><i class="fa-solid fa-trash"></i> Delete</button>
+                </td>
+            `;
+
+            tbody.appendChild(tr);
+        });
+    }
+
+    function deleteProduct(id, title) {
+        if (!confirm(`Are you sure you want to delete "${title}" from the website?`)) return;
+
+        // Check if it's in customProducts
+        let customProducts = JSON.parse(localStorage.getItem('m7_custom_products')) || [];
+        const isCustom = customProducts.some(p => p.id == id);
+
+        if (isCustom) {
+            customProducts = customProducts.filter(p => p.id != id);
+            localStorage.setItem('m7_custom_products', JSON.stringify(customProducts));
+        } else {
+            // Add to deletedProductIds
+            const deletedProductIds = JSON.parse(localStorage.getItem('m7_deleted_products')) || [];
+            if (!deletedProductIds.includes(id)) {
+                deletedProductIds.push(id);
+                localStorage.setItem('m7_deleted_products', JSON.stringify(deletedProductIds));
+            }
+        }
+
+        // Remove from in-memory mockProducts
+        const idx = mockProducts.findIndex(p => p.id == id);
+        if (idx !== -1) {
+            mockProducts.splice(idx, 1);
+        }
+
+        renderCatalogTable();
+    }
+
+    function resetAllDefaults() {
+        if (!confirm("Reset all custom products and deletions to default store catalog?")) return;
+        localStorage.removeItem('m7_custom_products');
+        localStorage.removeItem('m7_deleted_products');
+        location.reload();
+    }
+</script>
+</body>
+</html>

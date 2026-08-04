@@ -7,7 +7,7 @@ const mockProducts = [
     { id: 8, categories: ['women'], brand: "ALDO", title: "Stiletto Heel Pumps", price: 2500, oldPrice: null, image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=1000&auto=format&fit=crop", badge: "NEW" },
     
     // MEN
-    { id: 2, categories: ['men'], brand: "♦️𝑴7♦️", title: "Oversized 'Believe' Graphic T-Shirt", price: 450, oldPrice: null, image: "images/men-tshirt-believe.png", badge: "NEW" },
+    { id: 2, categories: ['men'], brand: "♦️𝑴7♦️", title: "Oversized 'Believe' Graphic T-Shirt", price: 450, oldPrice: null, image: "images/men-tshirt-believe.png", badge: "NEW", colors: ['Black', 'Burgundy', 'White'] },
 
     // KIDS
     { id: 9, categories: ['kids'], brand: "MOTHERCARE", title: "Printed Cotton Pajamas", price: 650, oldPrice: null, image: "https://images.unsplash.com/photo-1519272365922-0a1501c6fc82?q=80&w=1000&auto=format&fit=crop", badge: "NEW" },
@@ -31,6 +31,20 @@ const mockProducts = [
     { id: 15, categories: ['women'], brand: "UNDER ARMOUR", title: "HeatGear Compression Leggings", price: 1900, oldPrice: null, image: "https://images.unsplash.com/photo-1506152983158-b4a74a01c721?q=80&w=1000&auto=format&fit=crop", badge: "NEW" },
     { id: 3, categories: ['women'], brand: "GINGER", title: "Ribbed Long Sleeve Top", price: 450, oldPrice: 900, image: "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?q=80&w=1000&auto=format&fit=crop", badge: "-50%" },
 ];
+
+// Merge custom products and handle admin deletions
+try {
+    const customProducts = JSON.parse(localStorage.getItem('m7_custom_products')) || [];
+    mockProducts.push(...customProducts);
+    const deletedProductIds = JSON.parse(localStorage.getItem('m7_deleted_products')) || [];
+    if (deletedProductIds.length > 0) {
+        const filtered = mockProducts.filter(p => !deletedProductIds.includes(p.id));
+        mockProducts.length = 0;
+        mockProducts.push(...filtered);
+    }
+} catch (e) {
+    console.error("Error loading custom products:", e);
+}
 
 // Global State
 let cartItems = JSON.parse(localStorage.getItem('m7_cart')) || [];
@@ -96,12 +110,21 @@ function addToCart(productId) {
         
         // If adding from product page, require and grab the size
         if (!productId) {
-            const activeSizeBtn = document.querySelector('.size-btn.active');
+            const activeSizeBtn = document.querySelector('.size-options .size-btn:not(.color-btn).active');
             if (activeSizeBtn) {
                 product.size = activeSizeBtn.innerText;
             } else {
                 const isPerfume = product.categories && product.categories.includes('perfumes');
                 return alert(isPerfume ? "Please select a bottle size (50 ml, 100 ml, or 200 ml) before adding to bag!" : "Please select a size before adding to bag!");
+            }
+
+            // Grab selected color if product has available colors
+            const activeColorBtn = document.querySelector('.color-btn.active');
+            if (activeColorBtn) {
+                product.selectedColor = activeColorBtn.innerText;
+                product.title = `${product.title} (${product.selectedColor})`;
+            } else if (product.colors && product.colors.length > 0) {
+                return alert("Please select a color before adding to bag!");
             }
         }
 
@@ -500,10 +523,30 @@ function loadProductDetails() {
             }
         }
     }
+
+    // Dynamic Color Selector based on product.colors
+    const colorSelector = document.getElementById('pd-color-selector');
+    const colorOptions = document.getElementById('pd-color-options');
+    if (colorSelector && colorOptions) {
+        if (product.colors && Array.isArray(product.colors) && product.colors.length > 0) {
+            colorSelector.style.display = 'block';
+            colorOptions.innerHTML = product.colors.map((color, idx) => 
+                `<button class="size-btn color-btn ${idx === 0 ? 'active' : ''}" onclick="selectColor(this)">${color.trim()}</button>`
+            ).join('');
+        } else {
+            colorSelector.style.display = 'none';
+            colorOptions.innerHTML = '';
+        }
+    }
 }
 
 function selectSize(element) {
-    document.querySelectorAll('.size-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.size-options .size-btn:not(.color-btn)').forEach(btn => btn.classList.remove('active'));
+    element.classList.add('active');
+}
+
+function selectColor(element) {
+    document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
     element.classList.add('active');
 }
 
