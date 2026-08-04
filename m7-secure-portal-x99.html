@@ -210,13 +210,13 @@
             <form id="login-form" onsubmit="handleLogin(event)">
                 <div class="form-row">
                     <label>Email Address or Username</label>
-                    <input type="text" id="login-email" placeholder="admin" required autocomplete="off">
+                    <input type="text" id="login-email" placeholder="Enter secure username..." required autocomplete="off">
                 </div>
                 <div class="form-row">
                     <label>Password</label>
-                    <input type="password" id="login-password" placeholder="admin" required autocomplete="off">
+                    <input type="password" id="login-password" placeholder="••••••••••••" required autocomplete="off">
                 </div>
-                <div id="login-error" class="error-msg">Invalid credentials! Please enter 'admin' for both email and password.</div>
+                <div id="login-error" class="error-msg">Invalid credentials! Authentication failed.</div>
                 <button type="submit" class="btn-primary" style="margin-top: 10px;"><i class="fa-solid fa-lock-open"></i> SIGN IN TO ADMIN</button>
             </form>
         </div>
@@ -389,21 +389,22 @@
 
     async function handleLogin(event) {
         event.preventDefault();
-        const email = document.getElementById('login-email').value.trim().toLowerCase();
+        const email = document.getElementById('login-email').value.trim();
         const pass = document.getElementById('login-password').value.trim();
         const errorEl = document.getElementById('login-error');
 
         const emailHash = await sha256(email);
         const passHash = await sha256(pass);
-        const targetHash = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918";
+        const targetUserHash = "751917fec3a4e028b7ff57dbe51df4d368e7939482ab648a6b44c3e2692f76b7";
+        const targetPassHash = "06629b8e60977eea75a97dac72c73a2b4a96df8d6fbe64fdd4cd55f06a37c83a";
 
-        if ((emailHash === targetHash || email === "admin@admin.com") && passHash === targetHash) {
+        if (emailHash === targetUserHash && passHash === targetPassHash) {
             errorEl.style.display = 'none';
             localStorage.setItem('m7_admin_logged_in', 'true');
             checkAdminAuth();
             renderCatalogTable();
         } else {
-            errorEl.innerText = 'Invalid email or password.';
+            errorEl.innerText = 'Invalid username or password.';
             errorEl.style.display = 'block';
         }
     }
