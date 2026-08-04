@@ -119,6 +119,70 @@
             margin-top: 10px;
             display: none;
         }
+        .cat-pill {
+            background: var(--color-gray-light);
+            border: 1px solid var(--color-gray-medium);
+            color: var(--color-primary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .cat-pill.active, .cat-pill:hover {
+            background: var(--color-primary);
+            color: var(--color-secondary);
+            border-color: var(--color-primary);
+        }
+        .color-checkbox-label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            padding: 6px 12px;
+            background: var(--color-gray-light);
+            border: 1px solid var(--color-gray-medium);
+            border-radius: 6px;
+        }
+        .color-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .admin-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #2a050d;
+            color: #ffffff;
+            border: 1px solid #d40000;
+            padding: 14px 22px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 10000;
+            font-weight: 600;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .form-section-header {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--color-gray-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--color-gray-medium);
+        }
     </style>
 </head>
 <body class="notranslate" translate="no">
@@ -178,20 +242,22 @@
                 <h2><i class="fa-solid fa-circle-plus"></i> Add New Product</h2>
                 
                 <form id="add-product-form" onsubmit="handleAddProduct(event)">
+                    <div class="form-section-header"><i class="fa-solid fa-layer-group"></i> 1. Select Category</div>
                     <div class="form-row">
-                        <label>Category *</label>
-                        <select id="prod-category" required>
-                            <option value="women">Women</option>
-                            <option value="men">Men</option>
-                            <option value="kids">Kids</option>
-                            <option value="perfumes">Perfumes</option>
-                            <option value="accessories">Accessories</option>
-                        </select>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px;" id="category-pills">
+                            <button type="button" class="cat-pill active" onclick="selectCategoryPill('men', this)">Men</button>
+                            <button type="button" class="cat-pill" onclick="selectCategoryPill('women', this)">Women</button>
+                            <button type="button" class="cat-pill" onclick="selectCategoryPill('kids', this)">Kids</button>
+                            <button type="button" class="cat-pill" onclick="selectCategoryPill('perfumes', this)">Perfumes</button>
+                            <button type="button" class="cat-pill" onclick="selectCategoryPill('accessories', this)">Accessories</button>
+                        </div>
+                        <input type="hidden" id="prod-category" value="men">
                     </div>
 
+                    <div class="form-section-header" style="margin-top: 20px;"><i class="fa-solid fa-tag"></i> 2. Product Name & Pricing</div>
                     <div class="form-row">
                         <label>Product Title / Name *</label>
-                        <input type="text" id="prod-title" placeholder="e.g. Oversized Hoodie with Logo" required>
+                        <input type="text" id="prod-title" placeholder="e.g. Oversized Hoodie with Logo" required style="font-size: 15px;">
                     </div>
 
                     <div class="form-row">
@@ -210,28 +276,32 @@
                         </div>
                     </div>
 
+                    <div class="form-section-header" style="margin-top: 20px;"><i class="fa-solid fa-palette"></i> 3. Available Colors</div>
                     <div class="form-row">
-                        <label>Available Colors * (Limited to White, Red, Black)</label>
-                        <div style="display: flex; gap: 16px; margin-top: 8px; flex-wrap: wrap;">
-                            <label style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600;">
-                                <input type="checkbox" name="prod-color" value="White" checked style="width: 18px; height: 18px;"> White
+                        <label>Select Available Colors * (Tap to toggle)</label>
+                        <div style="display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap;">
+                            <label class="color-checkbox-label">
+                                <input type="checkbox" name="prod-color" value="White" checked>
+                                <span class="color-dot" style="background: #ffffff; border: 1px solid #ccc;"></span> White
                             </label>
-                            <label style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600;">
-                                <input type="checkbox" name="prod-color" value="Red" checked style="width: 18px; height: 18px;"> Red
+                            <label class="color-checkbox-label">
+                                <input type="checkbox" name="prod-color" value="Red" checked>
+                                <span class="color-dot" style="background: #D40000;"></span> Red
                             </label>
-                            <label style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600;">
-                                <input type="checkbox" name="prod-color" value="Black" checked style="width: 18px; height: 18px;"> Black
+                            <label class="color-checkbox-label">
+                                <input type="checkbox" name="prod-color" value="Black" checked>
+                                <span class="color-dot" style="background: #000000;"></span> Black
                             </label>
                         </div>
-                        <small style="color: var(--color-gray-dark); font-size: 11px; display: block; margin-top: 4px;">Select from White, Red, and Black.</small>
                     </div>
 
+                    <div class="form-section-header" style="margin-top: 20px;"><i class="fa-solid fa-camera"></i> 4. Upload Product Photos</div>
                     <div class="form-row">
-                        <label>Upload Product Images * (Up to 3 Photos)</label>
-                        <input type="file" id="prod-images-file" accept="image/*" multiple style="padding: 10px; background: var(--color-gray-light); border: 1px dashed var(--color-gray-medium); cursor: pointer; width: 100%;">
-                        <small style="color: var(--color-gray-dark); font-size: 11px; display: block; margin-top: 4px;">Choose up to 3 photos directly from your phone or computer. No link required!</small>
-                        <div id="image-preview-container" style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;"></div>
-                        <input type="text" id="prod-image-url" placeholder="OR paste image URL (optional)" style="margin-top: 8px;">
+                        <label>Upload Images * (Max 3 Photos)</label>
+                        <input type="file" id="prod-images-file" accept="image/*" multiple style="padding: 14px; background: var(--color-gray-light); border: 2px dashed var(--color-gray-medium); border-radius: 8px; cursor: pointer; width: 100%; font-weight: 600;">
+                        <small style="color: var(--color-gray-dark); font-size: 11px; display: block; margin-top: 6px;">Tap to choose up to 3 photos from your phone or computer. First image will be the main photo.</small>
+                        <div id="image-preview-container" style="display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap;"></div>
+                        <input type="text" id="prod-image-url" placeholder="OR paste web image URL (optional)" style="margin-top: 8px;">
                     </div>
 
                     <div class="form-row">
@@ -239,7 +309,10 @@
                         <input type="text" id="prod-badge" placeholder="e.g. NEW or -25%">
                     </div>
 
-                    <button type="submit" class="btn-primary" style="margin-top: 10px;"><i class="fa-solid fa-plus"></i> PUBLISH PRODUCT</button>
+                    <div style="display: flex; gap: 10px; margin-top: 16px;">
+                        <button type="submit" class="btn-primary" style="flex: 2; font-size: 15px;"><i class="fa-solid fa-cloud-arrow-up"></i> PUBLISH PRODUCT</button>
+                        <button type="button" onclick="clearAddForm()" style="flex: 1; background: transparent; color: var(--color-gray-dark); border: 1px solid var(--color-gray-medium); border-radius: 6px; cursor: pointer; font-weight: 600;">Clear</button>
+                    </div>
                 </form>
             </div>
 
@@ -247,6 +320,18 @@
             <div class="admin-box">
                 <h2><span><i class="fa-solid fa-list"></i> Live Website Products</span> <span id="catalog-count" style="font-size: 14px; font-weight: normal; color: var(--color-gray-dark);"></span></h2>
                 
+                <div style="display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap;">
+                    <input type="text" id="admin-search-input" placeholder="🔍 Search products by title or brand..." oninput="renderCatalogTable()" style="flex: 1; min-width: 200px; padding: 10px 14px;">
+                    <select id="admin-filter-category" onchange="renderCatalogTable()" style="width: auto; padding: 10px 14px;">
+                        <option value="ALL">All Categories</option>
+                        <option value="men">Men</option>
+                        <option value="women">Women</option>
+                        <option value="kids">Kids</option>
+                        <option value="perfumes">Perfumes</option>
+                        <option value="accessories">Accessories</option>
+                    </select>
+                </div>
+
                 <div style="overflow-x: auto;">
                     <table class="catalog-table">
                         <thead>
@@ -406,12 +491,43 @@
         // Also add to active in-memory mockProducts
         mockProducts.unshift(newProduct);
 
-        alert(`✓ "${title}" has been published with ${images.length} photo(s) and colors (${colors.join(', ')})!`);
+        showToast(`✓ "${title}" has been published with ${images.length} photo(s)!`);
+        clearAddForm();
+        renderCatalogTable();
+    }
+
+    function showToast(msg) {
+        let toast = document.getElementById('admin-toast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'admin-toast';
+            toast.className = 'admin-toast';
+            document.body.appendChild(toast);
+        }
+        toast.innerHTML = `<i class="fa-solid fa-circle-check" style="color: #4cd137;"></i> ${msg}`;
+        toast.style.display = 'flex';
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 4000);
+    }
+
+    function selectCategoryPill(cat, el) {
+        document.querySelectorAll('#category-pills .cat-pill').forEach(btn => btn.classList.remove('active'));
+        if (el) el.classList.add('active');
+        const catInput = document.getElementById('prod-category');
+        if (catInput) catInput.value = cat;
+    }
+
+    function clearAddForm() {
         document.getElementById('add-product-form').reset();
         document.getElementById('image-preview-container').innerHTML = '';
         document.getElementById('prod-brand').value = "♦️𝑴7♦️";
-        
-        renderCatalogTable();
+        document.querySelectorAll('#category-pills .cat-pill').forEach((btn, idx) => {
+            if (idx === 0) btn.classList.add('active');
+            else btn.classList.remove('active');
+        });
+        const catInput = document.getElementById('prod-category');
+        if (catInput) catInput.value = 'men';
     }
 
     function renderCatalogTable() {
@@ -419,14 +535,28 @@
         const countEl = document.getElementById('catalog-count');
         if (!tbody) return;
 
-        tbody.innerHTML = '';
-        if (countEl) countEl.innerText = `(${mockProducts.length} items)`;
+        const searchInput = document.getElementById('admin-search-input');
+        const filterSelect = document.getElementById('admin-filter-category');
+        const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+        const catFilter = filterSelect ? filterSelect.value : 'ALL';
 
-        mockProducts.forEach(prod => {
+        let list = mockProducts.filter(prod => {
+            const matchesQuery = !query || prod.title.toLowerCase().includes(query) || (prod.brand && prod.brand.toLowerCase().includes(query));
+            const matchesCat = catFilter === 'ALL' || (prod.categories && prod.categories.includes(catFilter));
+            return matchesQuery && matchesCat;
+        });
+
+        tbody.innerHTML = '';
+        if (countEl) countEl.innerText = `(Showing ${list.length} of ${mockProducts.length} items)`;
+
+        if (list.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 28px; color: var(--color-gray-dark); font-weight: 600;"><i class="fa-solid fa-magnifying-glass"></i> No matching products found.</td></tr>`;
+            return;
+        }
+
+        list.forEach(prod => {
             const tr = document.createElement('tr');
-            
             const categoryBadge = prod.categories ? prod.categories.map(c => `<span style="text-transform: uppercase; font-size: 11px; font-weight: 700; background: #2a050d; padding: 2px 6px; border-radius: 4px;">${c}</span>`).join(' ') : 'GENERAL';
-            
             const colorsHtml = prod.colors && prod.colors.length > 0 ? prod.colors.map(c => `<span class="color-chip">${c}</span>`).join('') : '<span style="color: var(--color-gray-dark); font-size: 11px;">Standard</span>';
 
             tr.innerHTML = `
@@ -455,7 +585,6 @@
     function deleteProduct(id, title) {
         if (!confirm(`Are you sure you want to delete "${title}" from the website?`)) return;
 
-        // Check if it's in customProducts
         let customProducts = JSON.parse(localStorage.getItem('m7_custom_products')) || [];
         const isCustom = customProducts.some(p => p.id == id);
 
@@ -463,7 +592,6 @@
             customProducts = customProducts.filter(p => p.id != id);
             localStorage.setItem('m7_custom_products', JSON.stringify(customProducts));
         } else {
-            // Add to deletedProductIds
             const deletedProductIds = JSON.parse(localStorage.getItem('m7_deleted_products')) || [];
             if (!deletedProductIds.includes(id)) {
                 deletedProductIds.push(id);
@@ -471,12 +599,12 @@
             }
         }
 
-        // Remove from in-memory mockProducts
         const idx = mockProducts.findIndex(p => p.id == id);
         if (idx !== -1) {
             mockProducts.splice(idx, 1);
         }
 
+        showToast(`✓ Deleted "${title}" from catalog.`);
         renderCatalogTable();
     }
 
@@ -484,7 +612,8 @@
         if (!confirm("Reset all custom products and deletions to default store catalog?")) return;
         localStorage.removeItem('m7_custom_products');
         localStorage.removeItem('m7_deleted_products');
-        location.reload();
+        showToast("✓ Catalog reset to default products.");
+        setTimeout(() => location.reload(), 1000);
     }
 </script>
 </body>
