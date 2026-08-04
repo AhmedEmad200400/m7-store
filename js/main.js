@@ -103,7 +103,8 @@ function addToCart(productId) {
             if (activeSizeBtn) {
                 product.size = activeSizeBtn.innerText;
             } else {
-                return alert("Please select a size before adding to bag!");
+                const isPerfume = product.categories && product.categories.includes('perfumes');
+                return alert(isPerfume ? "Please select a bottle size (50 ml, 100 ml, or 200 ml) before adding to bag!" : "Please select a size before adding to bag!");
             }
         }
 
@@ -384,18 +385,10 @@ function renderProducts() {
 
     if (category) {
         const sectionTitle = document.querySelector('.section-title');
-        
-        if (category === 'sale') {
-            filteredProducts = mockProducts.filter(p => p.oldPrice !== null);
-            if (heroTitle) heroTitle.innerText = "The Big Summer Sale";
-            if (heroSubtitle) heroSubtitle.innerText = "Up to 70% off. Exclusive to ♦️𝑴7♦️";
-            if (sectionTitle) sectionTitle.innerText = "Sale Items";
-        } else {
-            filteredProducts = mockProducts.filter(p => p.categories && p.categories.includes(category));
-            if (heroTitle) heroTitle.innerText = `${category.toUpperCase()} COLLECTION`;
-            if (heroSubtitle) heroSubtitle.innerText = `Explore the latest trends in ${category} fashion.`;
-            if (sectionTitle) sectionTitle.innerText = `${category.toUpperCase()} PRODUCTS`;
-        }
+        filteredProducts = mockProducts.filter(p => p.categories && p.categories.includes(category));
+        if (heroTitle) heroTitle.innerText = `${category.toUpperCase()} COLLECTION`;
+        if (heroSubtitle) heroSubtitle.innerText = `Explore the latest trends in ${category} fashion.`;
+        if (sectionTitle) sectionTitle.innerText = `${category.toUpperCase()} PRODUCTS`;
     } else {
         const sectionTitle = document.querySelector('.section-title');
         if (sectionTitle) sectionTitle.innerText = "New Arrivals";
@@ -471,6 +464,41 @@ function loadProductDetails() {
         if(isWished) {
             wishBtn.classList.add('active');
             wishBtn.querySelector('i').className = 'fa-solid fa-heart';
+        }
+    }
+
+    // Dynamic Size / Bottle Size Selector based on product category
+    const sizeSelector = document.querySelector('.size-selector');
+    if (sizeSelector) {
+        const titleEl = sizeSelector.querySelector('h3');
+        const optionsEl = sizeSelector.querySelector('.size-options');
+        
+        if (product.categories && product.categories.includes('perfumes')) {
+            if (titleEl) titleEl.innerText = "Select Bottle Size";
+            if (optionsEl) {
+                optionsEl.innerHTML = `
+                    <button class="size-btn" onclick="selectSize(this)">50 ml</button>
+                    <button class="size-btn" onclick="selectSize(this)">100 ml</button>
+                    <button class="size-btn" onclick="selectSize(this)">200 ml</button>
+                `;
+            }
+        } else if (product.categories && product.categories.includes('accessories') && !product.categories.includes('women') && !product.categories.includes('men')) {
+            if (titleEl) titleEl.innerText = "Size";
+            if (optionsEl) {
+                optionsEl.innerHTML = `
+                    <button class="size-btn active" onclick="selectSize(this)">One Size</button>
+                `;
+            }
+        } else {
+            if (titleEl) titleEl.innerText = "Select Size";
+            if (optionsEl) {
+                optionsEl.innerHTML = `
+                    <button class="size-btn" onclick="selectSize(this)">S</button>
+                    <button class="size-btn" onclick="selectSize(this)">M</button>
+                    <button class="size-btn" onclick="selectSize(this)">L</button>
+                    <button class="size-btn" onclick="selectSize(this)">XL</button>
+                `;
+            }
         }
     }
 }
