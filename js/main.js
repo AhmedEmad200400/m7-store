@@ -492,10 +492,10 @@ function loadProductDetails() {
             if (titleEl) titleEl.innerText = "Select Size";
             if (optionsEl) {
                 optionsEl.innerHTML = `
-                    <button class="size-btn" onclick="selectSize(this)">S</button>
                     <button class="size-btn" onclick="selectSize(this)">M</button>
                     <button class="size-btn" onclick="selectSize(this)">L</button>
                     <button class="size-btn" onclick="selectSize(this)">XL</button>
+                    <button class="size-btn" onclick="selectSize(this)">XXL</button>
                 `;
             }
         }
