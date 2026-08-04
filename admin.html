@@ -15,7 +15,7 @@
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/style.css?v=24">
+    <link rel="stylesheet" href="css/style.css?v=25">
     <style>
         .admin-wrapper {
             max-width: 1200px;
@@ -210,15 +210,27 @@
                     </div>
 
                     <div class="form-row">
-                        <label>Available Colors * (Comma separated)</label>
-                        <input type="text" id="prod-colors" placeholder="e.g. Black, Burgundy, White, Red" required>
-                        <small style="color: var(--color-gray-dark); font-size: 11px; display: block; margin-top: 4px;">Customers will be able to select from these colors.</small>
+                        <label>Available Colors * (Limited to White, Red, Black)</label>
+                        <div style="display: flex; gap: 16px; margin-top: 8px; flex-wrap: wrap;">
+                            <label style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600;">
+                                <input type="checkbox" name="prod-color" value="White" checked style="width: 18px; height: 18px;"> White
+                            </label>
+                            <label style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600;">
+                                <input type="checkbox" name="prod-color" value="Red" checked style="width: 18px; height: 18px;"> Red
+                            </label>
+                            <label style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600;">
+                                <input type="checkbox" name="prod-color" value="Black" checked style="width: 18px; height: 18px;"> Black
+                            </label>
+                        </div>
+                        <small style="color: var(--color-gray-dark); font-size: 11px; display: block; margin-top: 4px;">Select from White, Red, and Black.</small>
                     </div>
 
                     <div class="form-row">
-                        <label>Image URL or Path *</label>
-                        <input type="text" id="prod-image" placeholder="e.g. images/men-tshirt-believe.png or https://..." required>
-                        <small style="color: var(--color-gray-dark); font-size: 11px; display: block; margin-top: 4px;">You can use an image path like <code>images/men-tshirt-believe.png</code> or any web image link.</small>
+                        <label>Upload Product Images * (Up to 3 Photos)</label>
+                        <input type="file" id="prod-images-file" accept="image/*" multiple style="padding: 10px; background: var(--color-gray-light); border: 1px dashed var(--color-gray-medium); cursor: pointer; width: 100%;">
+                        <small style="color: var(--color-gray-dark); font-size: 11px; display: block; margin-top: 4px;">Choose up to 3 photos directly from your phone or computer. No link required!</small>
+                        <div id="image-preview-container" style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;"></div>
+                        <input type="text" id="prod-image-url" placeholder="OR paste image URL (optional)" style="margin-top: 8px;">
                     </div>
 
                     <div class="form-row">
@@ -259,7 +271,7 @@
 </div>
 
 <!-- Custom JS -->
-<script src="js/main.js?v=24"></script>
+<script src="js/main.js?v=25"></script>
 <script>
     // Authentication Check on page load
     document.addEventListener('DOMContentLoaded', () => {
@@ -305,7 +317,22 @@
         checkAdminAuth();
     }
 
-    function handleAddProduct(event) {
+    document.getElementById('prod-images-file').addEventListener('change', function(e) {
+        const container = document.getElementById('image-preview-container');
+        container.innerHTML = '';
+        const files = Array.from(e.target.files).slice(0, 3);
+        files.forEach((file, index) => {
+            const url = URL.createObjectURL(file);
+            container.innerHTML += `
+                <div style="position: relative; width: 64px; height: 80px; border: 2px solid var(--color-primary); border-radius: 4px; overflow: hidden;">
+                    <img src="${url}" style="width: 100%; height: 100%; object-fit: cover;">
+                    <span style="position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.7); color: #fff; font-size: 10px; text-align: center;">#${index+1}</span>
+                </div>
+            `;
+        });
+    });
+
+    async function handleAddProduct(event) {
         event.preventDefault();
         
         const category = document.getElementById('prod-category').value;
@@ -314,11 +341,39 @@
         const price = parseFloat(document.getElementById('prod-price').value);
         const oldPriceVal = document.getElementById('prod-old-price').value;
         const oldPrice = oldPriceVal ? parseFloat(oldPriceVal) : null;
-        const colorsStr = document.getElementById('prod-colors').value.trim();
-        const image = document.getElementById('prod-image').value.trim();
         const badge = document.getElementById('prod-badge').value.trim() || null;
 
-        const colors = colorsStr.split(',').map(c => c.trim()).filter(Boolean);
+        const colorBoxes = document.querySelectorAll('input[name="prod-color"]:checked');
+        const colors = Array.from(colorBoxes).map(cb => cb.value);
+        if (colors.length === 0) {
+            alert('Please select at least one available color (White, Red, or Black).');
+            return;
+        }
+
+        const fileInput = document.getElementById('prod-images-file');
+        const urlInput = document.getElementById('prod-image-url');
+        let images = [];
+
+        if (fileInput.files && fileInput.files.length > 0) {
+            const maxFiles = Math.min(fileInput.files.length, 3);
+            for (let i = 0; i < maxFiles; i++) {
+                const file = fileInput.files[i];
+                const base64 = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = e => resolve(e.target.result);
+                    reader.onerror = e => reject(e);
+                    reader.readAsDataURL(file);
+                });
+                images.push(base64);
+            }
+        } else if (urlInput.value.trim()) {
+            images = [urlInput.value.trim()];
+        } else {
+            alert('Please either choose up to 3 photos from your device OR provide an image URL.');
+            return;
+        }
+
+        const mainImage = images[0];
 
         const newProduct = {
             id: Date.now(),
@@ -327,7 +382,8 @@
             title: title,
             price: price,
             oldPrice: oldPrice,
-            image: image,
+            image: mainImage,
+            images: images,
             badge: badge,
             colors: colors
         };
@@ -339,8 +395,9 @@
         // Also add to active in-memory mockProducts
         mockProducts.unshift(newProduct);
 
-        alert(`✓ "${title}" has been added to your store!`);
+        alert(`✓ "${title}" has been published with ${images.length} photo(s) and colors (${colors.join(', ')})!`);
         document.getElementById('add-product-form').reset();
+        document.getElementById('image-preview-container').innerHTML = '';
         document.getElementById('prod-brand').value = "♦️𝑴7♦️";
         
         renderCatalogTable();

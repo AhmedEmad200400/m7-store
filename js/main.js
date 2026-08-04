@@ -468,9 +468,17 @@ function loadProductDetails() {
     const oldPrice = document.getElementById('pd-old-price');
     const wishBtn = document.getElementById('pd-wishlist-btn');
     
-    if (mainImage) mainImage.src = product.image;
-    const firstThumb = document.querySelector('.gallery-thumbnails img.active');
-    if (firstThumb) firstThumb.src = product.image;
+    const imageList = (product.images && Array.isArray(product.images) && product.images.length > 0) 
+        ? product.images 
+        : [product.image];
+    
+    if (mainImage) mainImage.src = imageList[0];
+    const thumbContainer = document.querySelector('.gallery-thumbnails');
+    if (thumbContainer) {
+        thumbContainer.innerHTML = imageList.map((imgUrl, idx) => `
+            <img src="${imgUrl}" class="${idx === 0 ? 'active' : ''}" alt="Thumb ${idx + 1}" onclick="switchGalleryImage('${imgUrl}', this)" style="width: 64px; height: 80px; object-fit: cover; cursor: pointer; border-radius: 4px; border: 2px solid ${idx === 0 ? 'var(--color-primary)' : 'transparent'};">
+        `).join('');
+    }
     if (brand) brand.innerText = product.brand;
     if (title) title.innerText = product.title;
     if (price) price.innerText = `EGP ${product.price}`;
@@ -548,6 +556,19 @@ function selectSize(element) {
 function selectColor(element) {
     document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
     element.classList.add('active');
+}
+
+function switchGalleryImage(url, thumbEl) {
+    const mainImage = document.getElementById('pd-main-image');
+    if (mainImage) mainImage.src = url;
+    document.querySelectorAll('.gallery-thumbnails img').forEach(img => {
+        img.classList.remove('active');
+        img.style.borderColor = 'transparent';
+    });
+    if (thumbEl) {
+        thumbEl.classList.add('active');
+        thumbEl.style.borderColor = 'var(--color-primary)';
+    }
 }
 
 // Initialize
