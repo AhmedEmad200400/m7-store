@@ -1,20 +1,30 @@
 // ♦️𝑴7♦️ - Mock Database & Interactivity
 
-const mockProducts = [];
+const firebaseConfig = {
+  apiKey: "AIzaSyATftkOg3-qIrCzlwDfSN2ozjZB3ZTWsxg",
+  authDomain: "m7-store-91a9c.firebaseapp.com",
+  databaseURL: "https://m7-store-91a9c-default-rtdb.firebaseio.com",
+  projectId: "m7-store-91a9c",
+  storageBucket: "m7-store-91a9c.firebasestorage.app",
+  messagingSenderId: "838102550989",
+  appId: "1:838102550989:web:c6c81e307ef6a51fef1c84"
+};
 
-// Merge custom products and handle admin deletions
-try {
-    const customProducts = JSON.parse(localStorage.getItem('m7_custom_products')) || [];
-    mockProducts.push(...customProducts);
-    const deletedProductIds = JSON.parse(localStorage.getItem('m7_deleted_products')) || [];
-    if (deletedProductIds.length > 0) {
-        const filtered = mockProducts.filter(p => !deletedProductIds.includes(p.id));
-        mockProducts.length = 0;
-        mockProducts.push(...filtered);
-    }
-} catch (e) {
-    console.error("Error loading custom products:", e);
-}
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+let mockProducts = [];
+
+db.ref('products').on('value', (snapshot) => {
+    mockProducts = [];
+    snapshot.forEach((child) => {
+        mockProducts.unshift(child.val());
+    });
+    
+    if (typeof renderCatalogTable === 'function') renderCatalogTable();
+    if (typeof renderHomepage === 'function') renderHomepage();
+    if (typeof renderCategoryPage === 'function') renderCategoryPage();
+});
 
 // Global State
 let cartItems = JSON.parse(localStorage.getItem('m7_cart')) || [];
@@ -148,9 +158,6 @@ function hideCheckoutForm() {
     document.getElementById('cart-view-items').style.display = 'block';
 }
 
-// Replace this with your Google Apps Script Web App URL once deployed
-const GOOGLE_APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwUAl3hs0HcsECjy-X3rLBiY85ynFjfmLD1ALPGsakDUoNSOlbubXi4e57cdw2zIG8mjg/exec';
-
 async function submitOrder(e) {
     e.preventDefault();
     if(cartItems.length === 0) return;
@@ -161,71 +168,24 @@ async function submitOrder(e) {
     
     let total = cartItems.reduce((sum, item) => sum + item.price, 0);
 
-    // Group identical items to prevent typing the name twice
-    let groupedItems = {};
-    cartItems.forEach(item => {
-        let key = item.id + "_" + (item.size || 'N/A');
-        if (!groupedItems[key]) {
-            groupedItems[key] = { ...item, quantity: 1, unitPrice: item.price };
-        } else {
-            groupedItems[key].quantity++;
-            groupedItems[key].price += item.unitPrice;
-        }
-    });
-    let groupedArray = Object.values(groupedItems);
-
-    // Format items into a readable string for the spreadsheet
-    let itemsString = groupedArray.map(item => {
-        if (item.quantity > 1) {
-            return `${item.title} x${item.quantity} (EGP ${item.price})`;
-        } else {
-            return `${item.title} (EGP ${item.price})`;
-        }
-    }).join(', ');
-    
-    // Format sizes into a comma-separated string for the new Google Sheets column
-    let sizesString = groupedArray.map(item => item.size || 'N/A').join(', ');
-
     const order = {
         id: "ORD-" + Math.floor(Math.random() * 1000000),
         date: new Date().toLocaleDateString(),
         customer: { name, phone, address },
         items: [...cartItems],
-        sizes: sizesString,
         total: total,
         status: "New"
     };
 
-    // 1. Save locally so the admin.html Dashboard works flawlessly
+    // 1. Save locally for fallback
     orders.push(order);
     localStorage.setItem('m7_orders', JSON.stringify(orders));
 
-    // 2. Send to Google Sheets (if URL is configured)
-    if (GOOGLE_APP_SCRIPT_URL !== 'YOUR_GOOGLE_SCRIPT_URL_HERE') {
-        const payload = {
-            id: order.id,
-            date: order.date,
-            name: name,
-            phone: phone,
-            address: address,
-            items: itemsString,
-            sizes: sizesString,
-            total: total
-        };
-
-        try {
-            // Using no-cors because Google Apps Script handles redirecting
-            fetch(GOOGLE_APP_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(payload)
-            });
-        } catch (error) {
-            console.error("Error sending to Google Sheets:", error);
-        }
+    // 2. Push to Firebase Global Database
+    try {
+        db.ref('orders/' + order.id).set(order);
+    } catch(err) {
+        console.error("Firebase error", err);
     }
     
     // Clear cart

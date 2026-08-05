@@ -370,8 +370,12 @@
 
 </div>
 
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
 <!-- Custom JS -->
-<script src="js/main.js?v=26"></script>
+<script src="js/main.js?v=27"></script>
 <script>
     // Authentication Check on page load
     document.addEventListener('DOMContentLoaded', () => {
@@ -464,6 +468,7 @@
         const fileInput = document.getElementById('prod-images-file');
         const urlInput = document.getElementById('prod-image-url');
         let images = [];
+        let mainImage = null;
 
         if (fileInput.files && fileInput.files.length > 0) {
             const maxFiles = Math.min(fileInput.files.length, 3);
@@ -477,38 +482,57 @@
                 });
                 images.push(base64);
             }
+            mainImage = images[0];
         } else if (urlInput.value.trim()) {
             images = [urlInput.value.trim()];
+            mainImage = images[0];
         } else {
-            alert('Please either choose up to 3 photos from your device OR provide an image URL.');
-            return;
+            if (typeof editingProductId !== 'undefined' && editingProductId) {
+                const existingProduct = mockProducts.find(p => p.id == editingProductId);
+                if (existingProduct) {
+                    images = existingProduct.images || [existingProduct.image];
+                    mainImage = existingProduct.image;
+                }
+            } else {
+                alert('Please either choose up to 3 photos from your device OR provide an image URL.');
+                return;
+            }
         }
 
-        const mainImage = images[0];
+        if (typeof editingProductId !== 'undefined' && editingProductId) {
+            const updatedProduct = {
+                id: editingProductId,
+                categories: [category],
+                brand: brand,
+                title: title,
+                price: price,
+                oldPrice: oldPrice,
+                image: mainImage,
+                images: images,
+                badge: badge,
+                colors: colors
+            };
+            db.ref('products/' + editingProductId).set(updatedProduct);
+            showToast(`✓ "${title}" has been updated successfully!`);
+        } else {
+            const newId = Date.now();
+            const newProduct = {
+                id: newId,
+                categories: [category],
+                brand: brand,
+                title: title,
+                price: price,
+                oldPrice: oldPrice,
+                image: mainImage,
+                images: images,
+                badge: badge,
+                colors: colors
+            };
+            db.ref('products/' + newId).set(newProduct);
+            showToast(`✓ "${title}" has been published globally!`);
+        }
 
-        const newProduct = {
-            id: Date.now(),
-            categories: [category],
-            brand: brand,
-            title: title,
-            price: price,
-            oldPrice: oldPrice,
-            image: mainImage,
-            images: images,
-            badge: badge,
-            colors: colors
-        };
-
-        const customProducts = JSON.parse(localStorage.getItem('m7_custom_products')) || [];
-        customProducts.unshift(newProduct);
-        localStorage.setItem('m7_custom_products', JSON.stringify(customProducts));
-
-        // Also add to active in-memory mockProducts
-        mockProducts.unshift(newProduct);
-
-        showToast(`✓ "${title}" has been published with ${images.length} photo(s)!`);
         clearAddForm();
-        renderCatalogTable();
     }
 
     function showToast(msg) {
@@ -643,37 +667,13 @@
     }
 
     function deleteProduct(id, title) {
-        if (!confirm(`Are you sure you want to delete "${title}" from the website?`)) return;
+        if (!confirm(`Are you sure you want to delete "${title}" globally from the website?`)) return;
 
-        let customProducts = JSON.parse(localStorage.getItem('m7_custom_products')) || [];
-        const isCustom = customProducts.some(p => p.id == id);
-
-        if (isCustom) {
-            customProducts = customProducts.filter(p => p.id != id);
-            localStorage.setItem('m7_custom_products', JSON.stringify(customProducts));
-        } else {
-            const deletedProductIds = JSON.parse(localStorage.getItem('m7_deleted_products')) || [];
-            if (!deletedProductIds.includes(id)) {
-                deletedProductIds.push(id);
-                localStorage.setItem('m7_deleted_products', JSON.stringify(deletedProductIds));
-            }
-        }
-
-        const idx = mockProducts.findIndex(p => p.id == id);
-        if (idx !== -1) {
-            mockProducts.splice(idx, 1);
-        }
-
-        showToast(`✓ Deleted "${title}" from catalog.`);
-        renderCatalogTable();
-    }
-
-    function resetAllDefaults() {
-        if (!confirm("Reset all custom products and deletions to default store catalog?")) return;
-        localStorage.removeItem('m7_custom_products');
-        localStorage.removeItem('m7_deleted_products');
-        showToast("✓ Catalog reset to default products.");
-        setTimeout(() => location.reload(), 1000);
+        db.ref('products/' + id).remove().then(() => {
+            showToast(`✓ Deleted "${title}" from catalog.`);
+        }).catch((err) => {
+            alert('Error deleting product: ' + err.message);
+        });
     }
 </script>
 </body>
