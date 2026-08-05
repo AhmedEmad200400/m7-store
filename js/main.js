@@ -23,7 +23,7 @@ window.db.ref('products').on('value', (snapshot) => {
     
     if (typeof renderCatalogTable === 'function') renderCatalogTable();
     if (typeof renderProducts === 'function') renderProducts();
-    if (typeof renderProductDetails === 'function') renderProductDetails();
+    if (typeof loadProductDetails === 'function') loadProductDetails();
 }, (error) => {
     console.error("Firebase Read Error:", error);
 });
@@ -100,29 +100,25 @@ function addToCart(productId) {
                 return alert(isPerfume ? "Please select a bottle size (50 ml, 100 ml, or 200 ml) before adding to bag!" : "Please select a size before adding to bag!");
             }
 
-            // Grab selected color if product has available colors
-            const activeColorBtn = document.querySelector('.color-btn.active');
+            const activeColorBtn = document.querySelector('.size-options .color-btn.active');
             if (activeColorBtn) {
-                product.selectedColor = activeColorBtn.innerText;
-                product.title = `${product.title} (${product.selectedColor})`;
-            } else if (product.colors && product.colors.length > 0) {
-                return alert("Please select a color before adding to bag!");
+                product.color = activeColorBtn.innerText;
             }
         }
 
         cartItems.push(product);
         saveCart();
-        toggleCart(true);
-
-        const btn = document.getElementById('add-to-cart-btn');
-        if (btn) {
-            const originalText = btn.innerText;
-            btn.innerText = "ADDED TO BAG ✓";
-            btn.style.background = "var(--color-accent)";
+        
+        // Visual feedback
+        const btn = document.getElementById('add-to-cart-btn') || document.querySelector(`button[onclick="addToCart(${productId})"]`);
+        if(btn) {
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> ADDED';
+            btn.style.background = "transparent";
             btn.style.borderColor = "var(--color-accent)";
             btn.style.color = "var(--color-secondary)";
             setTimeout(() => {
-                btn.innerText = originalText;
+                btn.innerHTML = originalText;
                 btn.style.background = "var(--color-primary)";
                 btn.style.borderColor = "var(--color-primary)";
             }, 2000);
@@ -196,7 +192,17 @@ async function submitOrder(e) {
     hideCheckoutForm();
     toggleCart(false);
     
-    alert(`Thank you, ${name}! Your order (${order.id}) has been received and will be paid via Cash on Delivery.`);
+    // Success Toast
+    let toast = document.getElementById('admin-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'admin-toast';
+        toast.className = 'admin-toast';
+        document.body.appendChild(toast);
+    }
+    toast.innerHTML = `<i class="fa-solid fa-circle-check" style="color: #4cd137;"></i> Order Placed Successfully! We will contact you soon.`;
+    toast.style.display = 'flex';
+    setTimeout(() => toast.style.display = 'none', 5000);
 }
 
 
@@ -207,8 +213,6 @@ function updateWishlistUI() {
     const count = wishlistItems.length;
     document.querySelectorAll('.wishlist-count').forEach(badge => {
         badge.innerText = count;
-        badge.style.transform = 'scale(1.5)';
-        setTimeout(() => badge.style.transform = 'scale(1)', 200);
     });
 
     const container = document.getElementById('wishlist-items-container');
@@ -225,10 +229,7 @@ function updateWishlistUI() {
                             <div class="cart-item-brand">${item.brand}</div>
                             <div class="cart-item-title">${item.title}</div>
                             <div class="cart-item-price">EGP ${item.price}</div>
-                            <div style="margin-top: 8px;">
-                                <span class="cart-item-remove" onclick="removeFromWishlist(${index})" style="color:var(--color-gray-dark); margin-right: 10px;">Remove</span>
-                                <span class="cart-item-remove" onclick="addToCart(${item.id}); removeFromWishlist(${index});" style="color:var(--color-primary); font-weight: 700;">Move to Bag</span>
-                            </div>
+                            <span class="cart-item-remove" onclick="removeFromWishlist(${index})">Remove</span>
                         </div>
                     </div>
                 `;
@@ -242,62 +243,33 @@ function saveWishlist() {
     updateWishlistUI();
 }
 
-function toggleWishlist(event, element, isProductPage = false) {
-    event.stopPropagation();
-    
-    let productId;
-    if (isProductPage) {
+function toggleWishlist(event, productId, fromProductPage = false) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    let pId = productId;
+    if (fromProductPage) {
         const urlParams = new URLSearchParams(window.location.search);
-        productId = parseInt(urlParams.get('id'));
-    } else {
-        // Extract ID from parent card (requires passing ID to render function)
-        // For simplicity in this static prototype, if we don't have ID easily available from the element
-        // We'll rely on the global rendering function to pass it. 
-        // Wait, the grid render function doesn't pass ID to toggleWishlist currently. Let's fix that.
-    }
-    
-    if(!productId) {
-        // Fallback if ID wasn't passed directly (used in old grid render)
-        // I will update renderProducts to pass ID.
-        return;
+        pId = urlParams.get('id');
     }
 
-    const index = wishlistItems.findIndex(p => p.id === productId);
+    const index = wishlistItems.findIndex(p => p.id == pId);
     if (index > -1) {
-        // Remove
         wishlistItems.splice(index, 1);
-        if(element) {
-            element.classList.remove('active');
-            element.querySelector('i').className = 'fa-regular fa-heart';
+        if (event && event.currentTarget) {
+            event.currentTarget.classList.remove('active');
+            event.currentTarget.querySelector('i').className = 'fa-regular fa-heart';
         }
     } else {
-        // Add
-        const product = mockProducts.find(p => p.id === productId);
-        if(product) {
+        const product = mockProducts.find(p => p.id == pId);
+        if (product) {
             wishlistItems.push(product);
-            if(element) {
-                element.classList.add('active');
-                element.querySelector('i').className = 'fa-solid fa-heart';
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+                event.currentTarget.querySelector('i').className = 'fa-solid fa-heart';
             }
-        }
-    }
-    saveWishlist();
-}
-
-// Fixed toggle for grid cards
-function toggleWishlistFromGrid(event, element, productId) {
-    event.stopPropagation();
-    const index = wishlistItems.findIndex(p => p.id === productId);
-    if (index > -1) {
-        wishlistItems.splice(index, 1);
-        element.classList.remove('active');
-        element.querySelector('i').className = 'fa-regular fa-heart';
-    } else {
-        const product = mockProducts.find(p => p.id === productId);
-        if(product) {
-            wishlistItems.push(product);
-            element.classList.add('active');
-            element.querySelector('i').className = 'fa-solid fa-heart';
         }
     }
     saveWishlist();
@@ -306,7 +278,6 @@ function toggleWishlistFromGrid(event, element, productId) {
 function removeFromWishlist(index) {
     wishlistItems.splice(index, 1);
     saveWishlist();
-    // Re-render grid to update heart icons
     renderProducts();
 }
 
@@ -326,6 +297,10 @@ function toggleWishlistPanel() {
 function renderProducts() {
     const grid = document.getElementById('dynamic-product-grid');
     if (!grid) return;
+
+    // Optional: if mockProducts is empty, show a nice loading state instead of "No products found"
+    // We assume if length is 0, we might still be loading from Firebase.
+    // However, if they truly have no products, it will just show "No products found".
 
     const urlParams = new URLSearchParams(window.location.search);
     const category = urlParams.get('category');
@@ -354,29 +329,27 @@ function renderProducts() {
     }
 
     filteredProducts.forEach(product => {
-        const badgeHTML = product.badge 
-            ? `<span class="discount-badge" ${product.badge === 'NEW' || product.badge === 'BESTSELLER' ? 'style="background:#000"' : ''}>${product.badge}</span>` 
-            : '';
-            
-        const oldPriceHTML = product.oldPrice 
-            ? `<span class="price-old">EGP ${product.oldPrice}</span>` 
-            : '';
-
-        // Check if in wishlist
-        const isWished = wishlistItems.find(p => p.id === product.id);
+        const isWished = wishlistItems.some(p => p.id === product.id);
         const heartClass = isWished ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
-        const activeClass = isWished ? 'active' : '';
+        const wishActive = isWished ? 'active' : '';
+
+        const badgeHTML = product.badge ? `<div class="product-badge">${product.badge}</div>` : '';
+        const oldPriceHTML = product.oldPrice ? `<span class="price-old">EGP ${product.oldPrice}</span>` : '';
 
         const cardHTML = `
-            <article class="product-card" onclick="window.location.href='product.html?id=${product.id}'">
-                <div class="product-image-wrapper">
-                    ${badgeHTML}
-                    <div class="wishlist-btn ${activeClass}" onclick="toggleWishlistFromGrid(event, this, ${product.id})"><i class="${heartClass}"></i></div>
-                    <img src="${product.image}" alt="${product.title}">
+            <article class="product-card">
+                ${badgeHTML}
+                <div class="product-image-wrap">
+                    <img src="${product.image}" alt="${product.title}" onclick="window.location.href='product.html?id=${product.id}'" style="cursor: pointer;">
+                    <div class="product-actions">
+                        <button class="action-btn wishlist-btn ${wishActive}" onclick="toggleWishlist(event, ${product.id})">
+                            <i class="${heartClass}"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="product-info">
                     <div class="product-brand">${product.brand}</div>
-                    <div class="product-title">${product.title}</div>
+                    <h3 class="product-title" onclick="window.location.href='product.html?id=${product.id}'" style="cursor: pointer;">${product.title}</h3>
                     <div class="product-price">EGP ${product.price} ${oldPriceHTML}</div>
                 </div>
             </article>
@@ -391,7 +364,8 @@ function loadProductDetails() {
     
     if (!productId) return; 
     
-    const product = mockProducts.find(p => p.id == productId) || mockProducts[0];
+    const product = mockProducts.find(p => p.id == productId);
+    if (!product) return; // Wait for Firebase data to arrive if empty
     
     const mainImage = document.getElementById('pd-main-image');
     const brand = document.getElementById('pd-brand');
@@ -417,6 +391,7 @@ function loadProductDetails() {
     
     if (oldPrice && product.oldPrice) {
         oldPrice.innerText = `EGP ${product.oldPrice}`;
+        oldPrice.style.display = 'inline-block';
     } else if (oldPrice) {
         oldPrice.style.display = 'none';
     }
@@ -427,6 +402,7 @@ function loadProductDetails() {
             wishBtn.classList.add('active');
             wishBtn.querySelector('i').className = 'fa-solid fa-heart';
         }
+        wishBtn.setAttribute('onclick', `toggleWishlist(event, ${product.id}, true)`);
     }
 
     // Dynamic Size / Bottle Size Selector based on product category
@@ -464,18 +440,27 @@ function loadProductDetails() {
         }
     }
 
-    // Dynamic Color Selector based on product.colors
+    // Dynamic Colors Selector
     const colorSelector = document.getElementById('pd-color-selector');
     const colorOptions = document.getElementById('pd-color-options');
     if (colorSelector && colorOptions) {
         if (product.colors && Array.isArray(product.colors) && product.colors.length > 0) {
             colorSelector.style.display = 'block';
-            colorOptions.innerHTML = product.colors.map((color, idx) => 
-                `<button class="size-btn color-btn ${idx === 0 ? 'active' : ''}" onclick="selectColor(this)">${color.trim()}</button>`
-            ).join('');
+            colorOptions.innerHTML = product.colors.map(color => {
+                let hex = '#fff';
+                if (color.toLowerCase() === 'black') hex = '#000';
+                if (color.toLowerCase() === 'red') hex = '#D40000';
+                if (color.toLowerCase() === 'white') hex = '#fff';
+                
+                return `
+                    <button class="size-btn color-btn" onclick="selectColor(this)" style="display: flex; align-items: center; gap: 6px;">
+                        <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: ${hex}; border: 1px solid #ccc;"></span>
+                        ${color}
+                    </button>
+                `;
+            }).join('');
         } else {
             colorSelector.style.display = 'none';
-            colorOptions.innerHTML = '';
         }
     }
 }
@@ -506,8 +491,8 @@ function switchGalleryImage(url, thumbEl) {
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     adaptToDeviceScreen();
-    renderProducts();
-    loadProductDetails();
+    // Do NOT render products/productDetails immediately to prevent empty state flash. 
+    // They will be rendered automatically via Firebase .on('value') listener when data loads.
     updateCartUI(); 
     updateWishlistUI();
 });
