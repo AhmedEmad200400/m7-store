@@ -22,8 +22,8 @@ db.ref('products').on('value', (snapshot) => {
     });
     
     if (typeof renderCatalogTable === 'function') renderCatalogTable();
-    if (typeof renderHomepage === 'function') renderHomepage();
-    if (typeof renderCategoryPage === 'function') renderCategoryPage();
+    if (typeof renderProducts === 'function') renderProducts();
+    if (typeof renderProductDetails === 'function') renderProductDetails();
 });
 
 // Global State
