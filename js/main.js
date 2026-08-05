@@ -11,11 +11,11 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+window.db = firebase.database();
 
 let mockProducts = [];
 
-db.ref('products').on('value', (snapshot) => {
+window.db.ref('products').on('value', (snapshot) => {
     mockProducts = [];
     snapshot.forEach((child) => {
         mockProducts.unshift(child.val());
@@ -24,6 +24,8 @@ db.ref('products').on('value', (snapshot) => {
     if (typeof renderCatalogTable === 'function') renderCatalogTable();
     if (typeof renderProducts === 'function') renderProducts();
     if (typeof renderProductDetails === 'function') renderProductDetails();
+}, (error) => {
+    console.error("Firebase Read Error:", error);
 });
 
 // Global State
@@ -183,7 +185,7 @@ async function submitOrder(e) {
 
     // 2. Push to Firebase Global Database
     try {
-        db.ref('orders/' + order.id).set(order);
+        window.db.ref('orders/' + order.id).set(order);
     } catch(err) {
         console.error("Firebase error", err);
     }

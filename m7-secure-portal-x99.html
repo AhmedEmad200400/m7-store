@@ -375,7 +375,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
 <!-- Custom JS -->
-<script src="js/main.js?v=28"></script>
+<script src="js/main.js?v=29"></script>
 <script>
     // Authentication Check on page load
     document.addEventListener('DOMContentLoaded', () => {
@@ -512,8 +512,12 @@
                 badge: badge,
                 colors: colors
             };
-            db.ref('products/' + editingProductId).set(updatedProduct);
-            showToast(`✓ "${title}" has been updated successfully!`);
+            window.db.ref('products/' + editingProductId).set(updatedProduct).then(() => {
+                showToast(`✓ "${title}" has been updated successfully!`);
+                clearAddForm();
+            }).catch(err => {
+                alert("Database Error: " + err.message);
+            });
         } else {
             const newId = Date.now();
             const newProduct = {
@@ -528,11 +532,13 @@
                 badge: badge,
                 colors: colors
             };
-            db.ref('products/' + newId).set(newProduct);
-            showToast(`✓ "${title}" has been published globally!`);
+            window.db.ref('products/' + newId).set(newProduct).then(() => {
+                showToast(`✓ "${title}" has been published globally!`);
+                clearAddForm();
+            }).catch(err => {
+                alert("Database Error: " + err.message);
+            });
         }
-
-        clearAddForm();
     }
 
     function showToast(msg) {
@@ -669,7 +675,7 @@
     function deleteProduct(id, title) {
         if (!confirm(`Are you sure you want to delete "${title}" globally from the website?`)) return;
 
-        db.ref('products/' + id).remove().then(() => {
+        window.db.ref('products/' + id).remove().then(() => {
             showToast(`✓ Deleted "${title}" from catalog.`);
         }).catch((err) => {
             alert('Error deleting product: ' + err.message);
