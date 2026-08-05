@@ -171,7 +171,7 @@ async function submitOrder(e) {
     // Group identical items to prevent typing the name twice
     let groupedItems = {};
     cartItems.forEach(item => {
-        let key = item.id + "_" + (item.size || 'N/A');
+        let key = item.id + "_" + (item.size || 'N/A') + "_" + (item.color || 'Standard');
         if (!groupedItems[key]) {
             groupedItems[key] = { ...item, quantity: 1, unitPrice: item.price };
         } else {
@@ -193,12 +193,16 @@ async function submitOrder(e) {
     // Format sizes into a comma-separated string for the new Google Sheets column
     let sizesString = groupedArray.map(item => item.size || 'N/A').join(', ');
 
+    // Format colors into a comma-separated string for the new Google Sheets column
+    let colorsString = groupedArray.map(item => item.color || 'Standard').join(', ');
+
     const order = {
         id: "ORD-" + Math.floor(Math.random() * 1000000),
         date: new Date().toLocaleDateString(),
         customer: { name, phone, address },
         items: [...cartItems],
         sizes: sizesString,
+        colors: colorsString,
         total: total,
         status: "New"
     };
@@ -224,6 +228,7 @@ async function submitOrder(e) {
             address: address,
             items: itemsString,
             sizes: sizesString,
+            colors: colorsString,
             total: total
         };
 
