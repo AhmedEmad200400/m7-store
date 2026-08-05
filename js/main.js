@@ -1,36 +1,6 @@
 // ♦️𝑴7♦️ - Mock Database & Interactivity
 
-const mockProducts = [
-    // WOMEN
-    { id: 1, categories: ['women'], brand: "MANGO", title: "Pleated Midi Dress with Belt", price: 1450, oldPrice: 2100, image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1000&auto=format&fit=crop", badge: "-30%" },
-    { id: 4, categories: ['women', 'accessories'], brand: "CALVIN KLEIN", title: "Monogram Crossbody Bag", price: 2990, oldPrice: null, image: "https://images.unsplash.com/photo-1485968579580-b6d095142e6e?q=80&w=1000&auto=format&fit=crop", badge: null },
-    { id: 8, categories: ['women'], brand: "ALDO", title: "Stiletto Heel Pumps", price: 2500, oldPrice: null, image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=1000&auto=format&fit=crop", badge: "NEW" },
-    
-    // MEN
-    { id: 2, categories: ['men'], brand: "♦️𝑴7♦️", title: "Oversized 'Believe' Graphic T-Shirt", price: 450, oldPrice: null, image: "images/men-tshirt-believe.png", badge: "NEW", colors: ['Black', 'Burgundy', 'White'] },
-
-    // KIDS
-    { id: 9, categories: ['kids'], brand: "MOTHERCARE", title: "Printed Cotton Pajamas", price: 650, oldPrice: null, image: "https://images.unsplash.com/photo-1519272365922-0a1501c6fc82?q=80&w=1000&auto=format&fit=crop", badge: "NEW" },
-    { id: 11, categories: ['kids'], brand: "GAP KIDS", title: "Denim Overalls", price: 1400, oldPrice: 1900, image: "https://images.unsplash.com/photo-1519689680058-324335c77eba?q=80&w=1000&auto=format&fit=crop", badge: "-26%" },
-    { id: 12, categories: ['kids'], brand: "ADIDAS", title: "Kids Stan Smith Sneakers", price: 2500, oldPrice: null, image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?q=80&w=1000&auto=format&fit=crop", badge: null },
-
-    // PERFUMES
-    { id: 13, categories: ['perfumes'], brand: "DIOR", title: "Sauvage Eau De Parfum 100ml", price: 5800, oldPrice: null, image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=1000&auto=format&fit=crop", badge: "BESTSELLER" },
-    { id: 14, categories: ['women'], brand: "MAC", title: "Matte Lipstick - Ruby Woo", price: 1100, oldPrice: 1400, image: "https://images.unsplash.com/photo-1586495777744-4413f21062fa?q=80&w=1000&auto=format&fit=crop", badge: "-21%" },
-    { id: 16, categories: ['perfumes'], brand: "CHANEL", title: "Bleu De Chanel Eau De Parfum 100ml", price: 6500, oldPrice: 7200, image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?q=80&w=1000&auto=format&fit=crop", badge: "BESTSELLER" },
-    { id: 17, categories: ['perfumes', 'women'], brand: "YVES SAINT LAURENT", title: "Black Opium Eau De Parfum 90ml", price: 6200, oldPrice: null, image: "https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=1000&auto=format&fit=crop", badge: "NEW" },
-    { id: 21, categories: ['perfumes', 'women'], brand: "TOM FORD", title: "Black Orchid Eau De Parfum 100ml", price: 7900, oldPrice: null, image: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?q=80&w=1000&auto=format&fit=crop", badge: "BESTSELLER" },
-
-    // ACCESSORIES
-    { id: 18, categories: ['accessories', 'women'], brand: "RAY-BAN", title: "Classic Aviator Sunglasses", price: 3800, oldPrice: 4500, image: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?q=80&w=1000&auto=format&fit=crop", badge: "-15%" },
-    { id: 19, categories: ['accessories', 'women'], brand: "MICHAEL KORS", title: "Parker Chronograph Rose Gold Watch", price: 7500, oldPrice: null, image: "https://images.unsplash.com/photo-1524805444758-089113d48a6d?q=80&w=1000&auto=format&fit=crop", badge: "NEW" },
-    { id: 20, categories: ['accessories'], brand: "TOMMY HILFIGER", title: "Genuine Leather Wallet", price: 1800, oldPrice: 2200, image: "https://images.unsplash.com/photo-1627123424574-724758594e93?q=80&w=1000&auto=format&fit=crop", badge: "-18%" },
-
-    // OTHERS / DEFAULT
-    { id: 6, categories: ['women'], brand: "PUMA", title: "Classic Suede Sneakers", price: 2100, oldPrice: 3000, image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?q=80&w=1000&auto=format&fit=crop", badge: "-30%" },
-    { id: 15, categories: ['women'], brand: "UNDER ARMOUR", title: "HeatGear Compression Leggings", price: 1900, oldPrice: null, image: "https://images.unsplash.com/photo-1506152983158-b4a74a01c721?q=80&w=1000&auto=format&fit=crop", badge: "NEW" },
-    { id: 3, categories: ['women'], brand: "GINGER", title: "Ribbed Long Sleeve Top", price: 450, oldPrice: 900, image: "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?q=80&w=1000&auto=format&fit=crop", badge: "-50%" },
-];
+const mockProducts = [];
 
 // Merge custom products and handle admin deletions
 try {
