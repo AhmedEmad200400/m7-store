@@ -375,7 +375,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
 <!-- Custom JS -->
-<script src="js/main.js?v=32"></script>
+<script src="js/main.js?v=33"></script>
 <script>
     // Authentication Check on page load
     document.addEventListener('DOMContentLoaded', () => {
@@ -615,6 +615,10 @@
                 </div>
             `;
         });
+        
+        // Ensure inputs are clear so we don't accidentally re-upload old files
+        document.getElementById('prod-images-file').value = '';
+        document.getElementById('prod-image-url').value = '';
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }

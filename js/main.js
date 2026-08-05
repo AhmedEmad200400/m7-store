@@ -284,7 +284,10 @@ function updateWishlistUI() {
                             <div class="cart-item-brand">${item.brand}</div>
                             <div class="cart-item-title">${item.title}</div>
                             <div class="cart-item-price">EGP ${item.price}</div>
-                            <span class="cart-item-remove" onclick="removeFromWishlist(${index})">Remove</span>
+                            <div style="margin-top: 8px;">
+                                <span class="cart-item-remove" onclick="removeFromWishlist(${index})" style="color:var(--color-gray-dark); margin-right: 15px; cursor: pointer; text-decoration: underline;">Remove</span>
+                                <span class="cart-item-remove" onclick="moveToCartFromWishlist(${index})" style="color:var(--color-primary); cursor: pointer; text-decoration: underline; font-weight: 700;">Move to Bag</span>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -334,6 +337,35 @@ function removeFromWishlist(index) {
     wishlistItems.splice(index, 1);
     saveWishlist();
     renderProducts();
+}
+
+function moveToCartFromWishlist(index) {
+    const item = wishlistItems[index];
+    if (item) {
+        const product = JSON.parse(JSON.stringify(item));
+        
+        // Provide defaults for required fields so checkout works smoothly
+        if (!product.size) {
+            if (product.categories && product.categories.includes('perfumes')) product.size = "100 ml";
+            else if (product.categories && product.categories.includes('accessories') && !product.categories.includes('women') && !product.categories.includes('men')) product.size = "One Size";
+            else product.size = "L"; // Default fallback
+        }
+        if (!product.color && product.colors && product.colors.length > 0) {
+            product.color = product.colors[0]; // Default color
+        }
+        
+        cartItems.push(product);
+        saveCart();
+        
+        // Remove from wishlist
+        wishlistItems.splice(index, 1);
+        saveWishlist();
+        renderProducts();
+        
+        // Switch view to Cart
+        toggleWishlistPanel();
+        toggleCart(true);
+    }
 }
 
 function toggleWishlistPanel() {
