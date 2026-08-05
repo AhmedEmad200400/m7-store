@@ -113,6 +113,20 @@
         .btn-delete:hover {
             background: #D40000;
         }
+        .btn-edit {
+            background: #f1f2f6;
+            color: #2f3542;
+            border: 1px solid #ced6e0;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+            margin-right: 4px;
+        }
+        .btn-edit:hover {
+            background: #dfe4ea;
+        }
         .error-msg {
             color: #ff6b6b;
             font-size: 13px;
@@ -520,6 +534,8 @@
     }
 
     function clearAddForm() {
+        editingProductId = null;
+        document.getElementById('submit-product-btn').innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> PUBLISH PRODUCT';
         document.getElementById('add-product-form').reset();
         document.getElementById('image-preview-container').innerHTML = '';
         document.getElementById('prod-brand').value = "♦️𝑴7♦️";
@@ -529,6 +545,48 @@
         });
         const catInput = document.getElementById('prod-category');
         if (catInput) catInput.value = 'men';
+    }
+
+    function editProduct(id) {
+        const prod = mockProducts.find(p => p.id == id);
+        if (!prod) return;
+
+        editingProductId = id;
+        document.getElementById('submit-product-btn').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> SAVE CHANGES';
+
+        document.getElementById('prod-title').value = prod.title || '';
+        document.getElementById('prod-brand').value = prod.brand || '♦️𝑴7♦️';
+        document.getElementById('prod-price').value = prod.price || '';
+        document.getElementById('prod-old-price').value = prod.oldPrice || '';
+        document.getElementById('prod-badge').value = prod.badge || '';
+
+        const cat = prod.categories && prod.categories.length > 0 ? prod.categories[0] : 'men';
+        const pills = document.querySelectorAll('#category-pills .cat-pill');
+        pills.forEach(btn => {
+            if (btn.innerText.toLowerCase() === cat.toLowerCase()) btn.classList.add('active');
+            else btn.classList.remove('active');
+        });
+        document.getElementById('prod-category').value = cat.toLowerCase();
+
+        const colorBoxes = document.querySelectorAll('input[name="prod-color"]');
+        colorBoxes.forEach(cb => {
+            cb.checked = prod.colors && prod.colors.includes(cb.value);
+        });
+
+        const container = document.getElementById('image-preview-container');
+        container.innerHTML = '';
+        const imgs = prod.images && prod.images.length > 0 ? prod.images : [prod.image];
+        imgs.forEach((url, index) => {
+            if (!url) return;
+            container.innerHTML += `
+                <div style="position: relative; width: 64px; height: 80px; border: 2px solid var(--color-primary); border-radius: 4px; overflow: hidden;">
+                    <img src="${url}" style="width: 100%; height: 100%; object-fit: cover;">
+                    <span style="position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.7); color: #fff; font-size: 10px; text-align: center;">#${index+1}</span>
+                </div>
+            `;
+        });
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function renderCatalogTable() {
@@ -574,7 +632,8 @@
                     ${prod.oldPrice ? `<div style="text-decoration: line-through; font-size: 12px; color: var(--color-gray-dark);">EGP ${prod.oldPrice}</div>` : ''}
                 </td>
                 <td>${colorsHtml}</td>
-                <td>
+                <td style="min-width: 150px;">
+                    <button class="btn-edit" onclick="editProduct(${prod.id})"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
                     <button class="btn-delete" onclick="deleteProduct(${prod.id}, '${prod.title.replace(/'/g, "\\'")}')"><i class="fa-solid fa-trash"></i> Delete</button>
                 </td>
             `;
