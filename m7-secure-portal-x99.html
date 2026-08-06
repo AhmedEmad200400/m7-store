@@ -584,23 +584,24 @@
         const submitBtn = document.getElementById('submit-product-btn');
         const originalBtnHTML = submitBtn.innerHTML;
         
-        const category = document.getElementById('prod-category').value;
-        const title = document.getElementById('prod-title').value.trim();
-        const brand = document.getElementById('prod-brand').value.trim();
-        const price = parseFloat(document.getElementById('prod-price').value);
-        const oldPriceVal = document.getElementById('prod-old-price').value;
-        const oldPrice = oldPriceVal ? parseFloat(oldPriceVal) : null;
-        const badge = document.getElementById('prod-badge').value.trim() || null;
+        try {
+            const category = document.getElementById('prod-category').value;
+            const title = document.getElementById('prod-title').value.trim();
+            const brand = document.getElementById('prod-brand').value.trim();
+            const price = parseFloat(document.getElementById('prod-price').value);
+            const oldPriceVal = document.getElementById('prod-old-price').value;
+            const oldPrice = oldPriceVal ? parseFloat(oldPriceVal) : null;
+            const badge = document.getElementById('prod-badge').value.trim() || null;
 
-        const colorBoxes = document.querySelectorAll('input[name="prod-color"]:checked');
-        const colors = Array.from(colorBoxes).map(cb => cb.value);
-        if (colors.length === 0) {
-            alert('Please select at least one available color (White, Red, or Black).');
-            return;
-        }
+            const colorBoxes = document.querySelectorAll('input[name="prod-color"]:checked');
+            const colors = Array.from(colorBoxes).map(cb => cb.value);
+            if (colors.length === 0) {
+                alert('Please select at least one available color (White, Red, or Black).');
+                return;
+            }
 
-        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
-        submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+            submitBtn.disabled = true;
 
         const fileInput = document.getElementById('prod-images-file');
         const urlInput = document.getElementById('prod-image-url');
@@ -633,51 +634,59 @@
             }
         }
 
-        if (typeof editingProductId !== 'undefined' && editingProductId) {
-            const updatedProduct = {
-                id: editingProductId,
-                categories: [category],
-                brand: brand,
-                title: title,
-                price: price,
-                oldPrice: oldPrice,
-                image: mainImage,
-                images: images,
-                badge: badge,
-                colors: colors
-            };
-            window.db.ref('products/' + editingProductId).set(updatedProduct).then(() => {
-                showToast(`✓ "${title}" has been updated successfully!`);
-                clearAddForm();
-            }).catch(err => {
-                alert("Database Error: " + err.message);
-            }).finally(() => {
-                submitBtn.innerHTML = originalBtnHTML;
-                submitBtn.disabled = false;
-            });
-        } else {
-            const newId = Date.now();
-            const newProduct = {
-                id: newId,
-                categories: [category],
-                brand: brand,
-                title: title,
-                price: price,
-                oldPrice: oldPrice,
-                image: mainImage,
-                images: images,
-                badge: badge,
-                colors: colors
-            };
-            window.db.ref('products/' + newId).set(newProduct).then(() => {
-                showToast(`✓ "${title}" has been published globally!`);
-                clearAddForm();
-            }).catch(err => {
-                alert("Database Error: " + err.message);
-            }).finally(() => {
-                submitBtn.innerHTML = originalBtnHTML;
-                submitBtn.disabled = false;
-            });
+            if (typeof editingProductId !== 'undefined' && editingProductId) {
+                const updatedProduct = {
+                    id: editingProductId,
+                    categories: [category],
+                    brand: brand,
+                    title: title,
+                    price: price,
+                    oldPrice: oldPrice,
+                    image: mainImage,
+                    images: images,
+                    badge: badge,
+                    colors: colors
+                };
+                window.db.ref('products/' + editingProductId).set(updatedProduct).then(() => {
+                    showToast(`✓ "${title}" has been updated successfully!`);
+                    clearAddForm();
+                    submitBtn.innerHTML = originalBtnHTML;
+                    submitBtn.disabled = false;
+                }).catch(err => {
+                    alert("Database Error: " + err.message);
+                    submitBtn.innerHTML = originalBtnHTML;
+                    submitBtn.disabled = false;
+                });
+            } else {
+                const newId = Date.now();
+                const newProduct = {
+                    id: newId,
+                    categories: [category],
+                    brand: brand,
+                    title: title,
+                    price: price,
+                    oldPrice: oldPrice,
+                    image: mainImage,
+                    images: images,
+                    badge: badge,
+                    colors: colors
+                };
+                window.db.ref('products/' + newId).set(newProduct).then(() => {
+                    showToast(`✓ "${title}" has been published globally!`);
+                    clearAddForm();
+                    submitBtn.innerHTML = originalBtnHTML;
+                    submitBtn.disabled = false;
+                }).catch(err => {
+                    alert("Database Error: " + err.message);
+                    submitBtn.innerHTML = originalBtnHTML;
+                    submitBtn.disabled = false;
+                });
+            }
+        } catch (fatalError) {
+            alert("Application Error: " + fatalError.message);
+            console.error(fatalError);
+            submitBtn.innerHTML = originalBtnHTML;
+            submitBtn.disabled = false;
         }
     }
 
