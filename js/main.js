@@ -1,18 +1,5 @@
 // ♦️𝑴7♦️ - Mock Database & Interactivity
 
-const firebaseConfig = {
-  apiKey: "AIzaSyATftkOg3-qIrCzlwDfSN2ozjZB3ZTWsxg",
-  authDomain: "m7-store-91a9c.firebaseapp.com",
-  databaseURL: "https://m7-store-91a9c-default-rtdb.firebaseio.com",
-  projectId: "m7-store-91a9c",
-  storageBucket: "m7-store-91a9c.firebasestorage.app",
-  messagingSenderId: "838102550989",
-  appId: "1:838102550989:web:c6c81e307ef6a51fef1c84"
-};
-
-firebase.initializeApp(firebaseConfig);
-window.db = firebase.database();
-
 let mockProducts = JSON.parse(localStorage.getItem('m7_cached_products')) || [];
 
 const GOOGLE_APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwUAl3hs0HcsECjy-X3rLBiY85ynFjfmLD1ALPGsakDUoNSOlbubXi4e57cdw2zIG8mjg/exec';
@@ -24,19 +11,45 @@ if (mockProducts.length > 0) {
     if (typeof loadProductDetails === 'function') loadProductDetails();
 }
 
-window.db.ref('products').on('value', (snapshot) => {
-    mockProducts = [];
-    snapshot.forEach((child) => {
-        mockProducts.unshift(child.val());
-    });
-    localStorage.setItem('m7_cached_products', JSON.stringify(mockProducts));
-    
-    if (typeof renderCatalogTable === 'function') renderCatalogTable();
-    if (typeof renderProducts === 'function') renderProducts();
-    if (typeof loadProductDetails === 'function') loadProductDetails();
-}, (error) => {
-    console.error("Firebase Read Error:", error);
-});
+// Defer Firebase initialization until the async scripts are fully loaded
+function initFirebase() {
+    if (typeof firebase !== 'undefined' && firebase.database) {
+        const firebaseConfig = {
+            apiKey: "AIzaSyATftkOg3-qIrCzlwDfSN2ozjZB3ZTWsxg",
+            authDomain: "m7-store-91a9c.firebaseapp.com",
+            databaseURL: "https://m7-store-91a9c-default-rtdb.firebaseio.com",
+            projectId: "m7-store-91a9c",
+            storageBucket: "m7-store-91a9c.firebasestorage.app",
+            messagingSenderId: "838102550989",
+            appId: "1:838102550989:web:c6c81e307ef6a51fef1c84",
+            measurementId: "G-EDES65GG0T"
+        };
+        
+        // Prevent double initialization
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        window.db = firebase.database();
+
+        window.db.ref('products').on('value', (snapshot) => {
+            mockProducts = [];
+            snapshot.forEach((child) => {
+                mockProducts.unshift(child.val());
+            });
+            localStorage.setItem('m7_cached_products', JSON.stringify(mockProducts));
+            
+            if (typeof renderCatalogTable === 'function') renderCatalogTable();
+            if (typeof renderProducts === 'function') renderProducts();
+            if (typeof loadProductDetails === 'function') loadProductDetails();
+        }, (error) => {
+            console.error("Firebase Read Error:", error);
+        });
+    } else {
+        setTimeout(initFirebase, 50); // check again shortly
+    }
+}
+
+initFirebase();
 
 // Global State
 let cartItems = JSON.parse(localStorage.getItem('m7_cart')) || [];
