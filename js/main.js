@@ -34,8 +34,12 @@ function initFirebase() {
         window.db.ref('products').on('value', (snapshot) => {
             mockProducts = [];
             snapshot.forEach((child) => {
-                mockProducts.unshift(child.val());
+                mockProducts.push(child.val());
             });
+            
+            // Ensure newest products (highest ID timestamp) are shown first
+            mockProducts.sort((a, b) => b.id - a.id);
+            
             localStorage.setItem('m7_cached_products', JSON.stringify(mockProducts));
             
             // Auto-restore old custom products from localStorage to Firebase
