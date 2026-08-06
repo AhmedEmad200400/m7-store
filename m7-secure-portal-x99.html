@@ -379,7 +379,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js" defer></script>
 
 <!-- Custom JS -->
-<script src="js/main.js?v=41" defer></script>
+<script src="js/main.js?v=42" defer></script>
 <script>
     let hasRunCompression = false;
     let editingProductId = null;
@@ -652,6 +652,11 @@
                     clearAddForm();
                     submitBtn.innerHTML = originalBtnHTML;
                     submitBtn.disabled = false;
+                    
+                    // Redirect to store
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
                 }).catch(err => {
                     alert("Database Error: " + err.message);
                     submitBtn.innerHTML = originalBtnHTML;
@@ -676,6 +681,11 @@
                     clearAddForm();
                     submitBtn.innerHTML = originalBtnHTML;
                     submitBtn.disabled = false;
+                    
+                    // Redirect to store
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
                 }).catch(err => {
                     alert("Database Error: " + err.message);
                     submitBtn.innerHTML = originalBtnHTML;
