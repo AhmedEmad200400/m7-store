@@ -16,7 +16,7 @@
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/style.css?v=25">
+    <link rel="stylesheet" href="css/style.css?v=26">
     <style>
         .admin-wrapper {
             max-width: 1200px;
@@ -26,11 +26,11 @@
         .login-box {
             max-width: 420px;
             margin: 80px auto;
-            background: #3d0912;
+            background: var(--color-gray-light);
             border: 1px solid var(--color-gray-medium);
             padding: 36px;
             border-radius: 8px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.06);
         }
         .form-row {
             margin-bottom: 20px;
@@ -62,10 +62,11 @@
             }
         }
         .admin-box {
-            background: #3d0912;
+            background: var(--color-gray-light);
             border: 1px solid var(--color-gray-medium);
             padding: 24px;
             border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.03);
         }
         .admin-box h2 {
             font-size: 18px;
@@ -94,16 +95,17 @@
         .color-chip {
             display: inline-block;
             padding: 2px 8px;
-            background: #6c1321;
+            background: var(--color-gray-medium);
+            color: var(--color-primary);
             border-radius: 12px;
             font-size: 11px;
             margin-right: 4px;
             margin-bottom: 4px;
         }
         .btn-delete {
-            background: #6c1321;
-            color: #ffffff;
-            border: 1px solid #D40000;
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
             padding: 6px 12px;
             border-radius: 4px;
             cursor: pointer;
@@ -111,7 +113,9 @@
             transition: all 0.2s;
         }
         .btn-delete:hover {
-            background: #D40000;
+            background: #c62828;
+            color: #ffffff;
+            border-color: #c62828;
         }
         .btn-edit {
             background: #f1f2f6;
@@ -170,12 +174,12 @@
             position: fixed;
             top: 20px;
             right: 20px;
-            background: #2a050d;
+            background: var(--color-accent);
             color: #ffffff;
-            border: 1px solid #d40000;
+            border: 1px solid var(--color-gray-medium);
             padding: 14px 22px;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             z-index: 10000;
             font-weight: 600;
             display: none;
@@ -371,11 +375,11 @@
 </div>
 
 <!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js" async></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js" async></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js" defer></script>
 
 <!-- Custom JS -->
-<script src="js/main.js?v=36" defer></script>
+<script src="js/main.js?v=37" defer></script>
 <script>
     // Authentication Check on page load
     document.addEventListener('DOMContentLoaded', () => {
@@ -649,7 +653,7 @@
 
         list.forEach(prod => {
             const tr = document.createElement('tr');
-            const categoryBadge = prod.categories ? prod.categories.map(c => `<span style="text-transform: uppercase; font-size: 11px; font-weight: 700; background: #2a050d; padding: 2px 6px; border-radius: 4px;">${c}</span>`).join(' ') : 'GENERAL';
+            const categoryBadge = prod.categories ? prod.categories.map(c => `<span style="text-transform: uppercase; font-size: 11px; font-weight: 700; background: var(--color-accent); color: var(--color-gray-light); padding: 2px 6px; border-radius: 4px;">${c}</span>`).join(' ') : 'GENERAL';
             const colorsHtml = prod.colors && prod.colors.length > 0 ? prod.colors.map(c => `<span class="color-chip">${c}</span>`).join('') : '<span style="color: var(--color-gray-dark); font-size: 11px;">Standard</span>';
 
             tr.innerHTML = `

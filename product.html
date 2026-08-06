@@ -5,23 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="google" content="notranslate">
     <meta http-equiv="Content-Language" content="en">
-    <title>♦️𝑴7♦️ - Product Details</title>
+    <title>â™¦ï¸ð‘´7â™¦ï¸ - Product Details</title>
     <!-- Inter Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/style.css?v=25">
+    <link rel="stylesheet" href="css/style.css?v=26">
 </head>
 <body class="notranslate" translate="no">
 
 <header class="site-header">
     <div class="header-top">
-        𝓐𝓛 𝓡𝓔𝓓𝓐
+        ð“ð“› ð“¡ð“”ð““ð“
     </div>
     <div class="header-main">
         <a href="index.html" class="site-logo notranslate" translate="no">
-            ♦️𝑴<span>7</span>♦️
+            â™¦ï¸ð‘´<span>7</span>â™¦ï¸
         </a>
 
         <nav class="main-navigation">
@@ -181,203 +181,8 @@
                     <input type="text" id="checkout-name" required style="width: 100%; padding: 10px; border: 1px solid var(--color-gray-medium); border-radius: 4px;">
                 </div>
                 <div class="form-group" style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">Phone Number</label>
-                    <input type="tel" id="checkout-phone" required style="width: 100%; padding: 10px; border: 1px solid var(--color-gray-medium); border-radius: 4px;">
-                </div>
-                <div class="form-group" style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">Delivery Address</label>
-                    <textarea id="checkout-address" rows="3" required style="width: 100%; padding: 10px; border: 1px solid var(--color-gray-medium); border-radius: 4px;"></textarea>
-                </div>
-                <p style="font-size: 12px; color: var(--color-gray-dark); margin-top: 10px;">Payment is Cash on Delivery.</p>
-            </form>
-        </div>
-        <div class="side-panel-footer">
-            <button class="btn-primary" style="width: 100%;" onclick="document.getElementById('manual-checkout-form').requestSubmit()">PLACE ORDER</button>
-            <button class="btn-secondary" style="width: 100%; margin-top: 10px;" onclick="hideCheckoutForm()">Back to Bag</button>
-        </div>
-    </div>
-</div>
-
-<!-- Slide-Out Wishlist Panel -->
-<div class="side-panel-overlay" id="wishlist-overlay" onclick="toggleWishlistPanel()"></div>
-<div class="side-panel" id="wishlist-panel">
-    <div class="side-panel-header">
-        <h2>Your Wishlist</h2>
-        <div class="side-panel-close" onclick="toggleWishlistPanel()">&times;</div>
-    </div>
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/style.css?v=25">
-</head>
-<body class="notranslate" translate="no">
-
-<header class="site-header">
-    <div class="header-top">
-        𝓐𝓛 𝓡𝓔𝓓𝓐
-    </div>
-    <div class="header-main">
-        <a href="index.html" class="site-logo notranslate" translate="no">
-            ♦️𝑴<span>7</span>♦️
-        </a>
-
-        <nav class="main-navigation">
-            <ul>
-                <li><a href="index.html?category=women">Women</a></li>
-                <li><a href="index.html?category=men">Men</a></li>
-                <li><a href="index.html?category=kids">Kids</a></li>
-                <li><a href="index.html?category=perfumes">Perfumes</a></li>
-                <li><a href="index.html?category=accessories">Accessories</a></li>
-            </ul>
-        </nav>
-
-        <div class="header-actions">
-            <div class="header-search">
-                <input type="text" placeholder="Search for products, brands...">
-                <i class="fa-solid fa-magnifying-glass" style="position: absolute; right: 15px; top: 12px; color: var(--color-gray-dark);"></i>
-            </div>
-            <div class="action-icon" onclick="toggleWishlistPanel()">
-                <i class="fa-regular fa-heart"></i>
-                <span class="wishlist-count">0</span>
-            </div>
-            <div class="action-icon" onclick="toggleCart()" style="position: relative;">
-                <i class="fa-solid fa-bag-shopping"></i>
-                <span class="cart-count">0</span>
-            </div>
-        </div>
-    </div>
-</header>
-
-<main class="site-main">
-
-    <!-- Product Details Section -->
-    <section class="product-details-container">
-        
-        <!-- Gallery -->
-        <div class="product-gallery">
-            <div class="gallery-thumbnails">
-                <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=100&auto=format&fit=crop" class="active" alt="Thumb">
-                <img src="https://images.unsplash.com/photo-1539008835657-9e8e9680c956?q=80&w=100&auto=format&fit=crop" alt="Thumb">
-            </div>
-            <div class="gallery-main">
-                <img id="pd-main-image" src="" alt="Product Main Image" style="width: 100%; height: 100%; object-fit: cover; aspect-ratio: 3/4;">
-            </div>
-        </div>
-
-        <!-- Info Panel -->
-        <div class="product-info-panel">
-            <div class="product-brand" id="pd-brand">BRAND</div>
-            <h1 id="pd-title">Product Title</h1>
-            
-            <div class="price-block">
-                <span id="pd-price">EGP 0.00</span>
-                <span id="pd-old-price" class="price-old" style="font-size: 16px;">EGP 0.00</span>
-            </div>
-
-            <!-- Size Selector -->
-            <div class="size-selector">
-                <h3>Select Size</h3>
-                <div class="size-options">
-                    <button class="size-btn" onclick="selectSize(this)">M</button>
-                    <button class="size-btn" onclick="selectSize(this)">L</button>
-                    <button class="size-btn" onclick="selectSize(this)">XL</button>
-                    <button class="size-btn" onclick="selectSize(this)">XXL</button>
-                </div>
-            </div>
-
-            <!-- Color Selector (Dynamically populated if product has available colors) -->
-            <div class="size-selector" id="pd-color-selector" style="display: none; margin-bottom: 24px;">
-                <h3>Select Color</h3>
-                <div class="size-options" id="pd-color-options">
-                </div>
-            </div>
-
-            <!-- Actions -->
-            <div class="action-buttons">
-                <!-- Add to cart triggers addToCart() which reads URL params -->
-                <button class="btn-primary" id="add-to-cart-btn" onclick="addToCart()" style="font-size: 16px; width: auto;">ADD TO BAG</button>
-                <div class="btn-wishlist-large" id="pd-wishlist-btn" onclick="toggleWishlist(event, null, true)">
-                    <i class="fa-regular fa-heart"></i>
-                </div>
-            </div>
-            
-            <!-- Description -->
-            <div style="margin-top: var(--spacing-xl); padding-top: var(--spacing-lg); border-top: 1px solid var(--color-gray-medium);">
-                <h3 style="font-size: 14px; text-transform: uppercase;">Product Details</h3>
-                <ul style="margin-top: var(--spacing-sm); font-size: 14px; color: var(--color-gray-dark); padding-left: 16px; list-style-type: disc;">
-                    <li>Premium quality fabric</li>
-                    <li>Machine washable</li>
-                    <li>Imported</li>
-                    <li>Style code: M7-2026-X</li>
-                </ul>
-            </div>
-        </div>
-
-    </section>
-
-</main>
-
-<nav class="mobile-bottom-nav">
-    <ul>
-        <li>
-            <a href="index.html">
-                <i class="fa-solid fa-house"></i>
-                Home
-            </a>
-        </li>
-        <li>
-            <a href="index.html?category=perfumes">
-                <i class="fa-solid fa-spray-can-sparkles"></i>
-                Perfumes
-            </a>
-        </li>
-        <li>
-            <a onclick="toggleWishlistPanel()">
-                <i class="fa-regular fa-heart"></i>
-                Wishlist
-            </a>
-        </li>
-        <li>
-            <a onclick="toggleCart()">
-                <i class="fa-solid fa-bag-shopping"></i>
-                Bag
-            </a>
-        </li>
-    </ul>
-</nav>
-
-<!-- Slide-Out Cart Overlay & Panel -->
-<div class="side-panel-overlay" id="cart-overlay" onclick="toggleCart()"></div>
-<div class="side-panel" id="cart-panel">
-    <div class="side-panel-header">
-        <h2>Your Bag</h2>
-        <div class="side-panel-close" onclick="toggleCart()">&times;</div>
-    </div>
-    
-    <!-- Cart Items View -->
-    <div id="cart-view-items">
-        <div class="side-panel-items" id="cart-items-container">
-            <!-- JS injects cart items here -->
-        </div>
-        <div class="side-panel-footer">
-            <div class="cart-total">
-                <span>Subtotal</span>
-                <span id="cart-total-price">EGP 0</span>
-            </div>
-            <button class="btn-primary" style="width: 100%;" onclick="showCheckoutForm()">PROCEED TO CHECKOUT</button>
-        </div>
-    </div>
-
-    <!-- Manual Checkout Form View -->
-    <div id="cart-view-checkout" style="display: none; height: 100%; flex-direction: column;">
-        <div class="side-panel-items" style="padding: var(--spacing-lg);">
-            <h3 style="margin-bottom: var(--spacing-md);">Delivery Details</h3>
-            <form id="manual-checkout-form" onsubmit="submitOrder(event)">
-                <div class="form-group" style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">Full Name</label>
-                    <input type="text" id="checkout-name" required style="width: 100%; padding: 10px; border: 1px solid var(--color-gray-medium); border-radius: 4px;">
-                </div>
-                <div class="form-group">
                     <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">Phone Number *</label>
-                    <input type="tel" id="checkout-phone" required pattern="[0-9]+" oninput="this.value = this.value.replace(/[^0-9]/g, '')" title="Please enter numbers only" style="width: 100%; padding: 12px; border: 1px solid var(--color-gray-medium); border-radius: 6px; font-family: inherit;">
+                    <input type="tel" id="checkout-phone" required pattern="[0-9]+" oninput="this.value = this.value.replace(/[^0-9]/g, '')" title="Please enter numbers only" style="width: 100%; padding: 10px; border: 1px solid var(--color-gray-medium); border-radius: 4px;">
                 </div>
                 <div class="form-group" style="margin-bottom: 15px;">
                     <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">Delivery Address</label>
@@ -406,10 +211,10 @@
 </div>
 
 <!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js" async></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js" async></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js" defer></script>
 
 <!-- Custom JS -->
-<script src="js/main.js?v=36" defer></script>
+<script src="js/main.js?v=37" defer></script>
 </body>
 </html>

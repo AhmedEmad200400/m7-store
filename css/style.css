@@ -7,12 +7,12 @@ Description: A premium, mobile-first e-commerce template inspired exactly by Nam
    CSS Variables (Namshi-inspired Palette)
    ========================================================================== */
 :root {
-    --color-primary: #ffffff;
-    --color-secondary: #990000;
+    --color-primary: #111111; /* Sleek Charcoal Dark Text */
+    --color-secondary: #FAF9F6; /* Alabaster Off-White Background */
     --color-accent: #000000; /* Sleek Black Accent */
-    --color-gray-light: #7a0000;
-    --color-gray-medium: #c21515; 
-    --color-gray-dark: #f0d5d5; 
+    --color-gray-light: #ffffff; /* White panels/cards/inputs */
+    --color-gray-medium: #e8e5db; /* Soft warm grey borders */
+    --color-gray-dark: #706d64; /* Muted secondary labels */
     --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     --spacing-xs: 4px;
     --spacing-sm: 8px;
@@ -513,7 +513,8 @@ h1, h2, h3, h4, h5, h6 {
     position: absolute;
     top: var(--spacing-sm);
     right: var(--spacing-sm);
-    background: var(--color-secondary);
+    background: var(--color-gray-light); /* White background circle */
+    color: var(--color-primary); /* charcoal heart */
     width: 32px;
     height: 32px;
     border-radius: 50%;
@@ -527,10 +528,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .wishlist-btn:hover {
-    color: var(--color-accent);
+    color: #D40000; /* Crimson Red */
 }
 .wishlist-btn.active {
-    color: var(--color-accent);
+    color: #D40000; /* Crimson Red */
 }
 .wishlist-btn.active i {
     font-weight: 900;
