@@ -38,9 +38,17 @@ function initFirebase() {
             });
             
             // Ensure newest products (highest ID timestamp) are shown first
-            mockProducts.sort((a, b) => b.id - a.id);
+            mockProducts.sort((a, b) => {
+                const idA = a && a.id ? Number(a.id) : 0;
+                const idB = b && b.id ? Number(b.id) : 0;
+                return idB - idA;
+            });
             
-            localStorage.setItem('m7_cached_products', JSON.stringify(mockProducts));
+            try {
+                localStorage.setItem('m7_cached_products', JSON.stringify(mockProducts));
+            } catch (e) {
+                console.warn("Could not cache products to localStorage (Quota Exceeded). Proceeding without cache.");
+            }
             
             // Auto-restore old custom products from localStorage to Firebase
             try {
