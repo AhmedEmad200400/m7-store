@@ -13,15 +13,23 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 window.db = firebase.database();
 
-let mockProducts = [];
+let mockProducts = JSON.parse(localStorage.getItem('m7_cached_products')) || [];
 
 const GOOGLE_APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwUAl3hs0HcsECjy-X3rLBiY85ynFjfmLD1ALPGsakDUoNSOlbubXi4e57cdw2zIG8mjg/exec';
+
+// Initial fast render from cache
+if (mockProducts.length > 0) {
+    if (typeof renderCatalogTable === 'function') renderCatalogTable();
+    if (typeof renderProducts === 'function') renderProducts();
+    if (typeof loadProductDetails === 'function') loadProductDetails();
+}
 
 window.db.ref('products').on('value', (snapshot) => {
     mockProducts = [];
     snapshot.forEach((child) => {
         mockProducts.unshift(child.val());
     });
+    localStorage.setItem('m7_cached_products', JSON.stringify(mockProducts));
     
     if (typeof renderCatalogTable === 'function') renderCatalogTable();
     if (typeof renderProducts === 'function') renderProducts();
@@ -92,19 +100,35 @@ function addToCart(productId) {
         // Create a copy of the product so we can attach unique sizes
         const product = JSON.parse(JSON.stringify(baseProduct));
         
-        // If adding from product page, require and grab the size
+        // If adding from product page
         if (!productId) {
-            const activeSizeBtn = document.querySelector('.size-options .size-btn:not(.color-btn).active');
-            if (activeSizeBtn) {
-                product.size = activeSizeBtn.innerText;
+            // Enforce Size Selection (if applicable)
+            if (product.categories && product.categories.includes('perfumes')) {
+                const activeSize = document.querySelector('.size-options .size-btn:not(.color-btn).active');
+                if(!activeSize) {
+                    alert('Please select a size before adding to cart.');
+                    return;
+                }
+                product.size = activeSize.innerText;
+            } else if (product.categories && product.categories.includes('accessories') && !product.categories.includes('women') && !product.categories.includes('men')) {
+                product.size = "One Size";
             } else {
-                const isPerfume = product.categories && product.categories.includes('perfumes');
-                return alert(isPerfume ? "Please select a bottle size (50 ml, 100 ml, or 200 ml) before adding to bag!" : "Please select a size before adding to bag!");
+                const activeSize = document.querySelector('.size-options .size-btn:not(.color-btn).active');
+                if(!activeSize) {
+                    alert('Please select a size before adding to cart.');
+                    return;
+                }
+                product.size = activeSize.innerText;
             }
-
-            const activeColorBtn = document.querySelector('.size-options .color-btn.active');
-            if (activeColorBtn) {
-                product.color = activeColorBtn.innerText;
+            
+            // Enforce Color Selection
+            if (product.colors && product.colors.length > 0) {
+                const activeColor = document.querySelector('.size-options .color-btn.active');
+                if (!activeColor) {
+                    alert('Please select a color before adding to cart.');
+                    return;
+                }
+                product.color = activeColor.innerText;
             }
         }
 
@@ -390,10 +414,6 @@ function renderProducts() {
     const grid = document.getElementById('dynamic-product-grid');
     if (!grid) return;
 
-    // Optional: if mockProducts is empty, show a nice loading state instead of "No products found"
-    // We assume if length is 0, we might still be loading from Firebase.
-    // However, if they truly have no products, it will just show "No products found".
-
     const urlParams = new URLSearchParams(window.location.search);
     const category = urlParams.get('category');
     
@@ -455,7 +475,7 @@ function loadProductDetails() {
     if (!productId) return; 
     
     const product = mockProducts.find(p => p.id == productId);
-    if (!product) return; // Wait for Firebase data to arrive if empty
+    if (!product) return; 
     
     const mainImage = document.getElementById('pd-main-image');
     const brand = document.getElementById('pd-brand');
@@ -495,7 +515,7 @@ function loadProductDetails() {
         wishBtn.setAttribute('onclick', `toggleWishlist(event, ${product.id}, true)`);
     }
 
-    // Dynamic Size / Bottle Size Selector based on product category
+    // Dynamic Size Selector
     const sizeSelector = document.querySelector('.size-selector');
     if (sizeSelector) {
         const titleEl = sizeSelector.querySelector('h3');
@@ -581,8 +601,6 @@ function switchGalleryImage(url, thumbEl) {
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     adaptToDeviceScreen();
-    // Do NOT render products/productDetails immediately to prevent empty state flash. 
-    // They will be rendered automatically via Firebase .on('value') listener when data loads.
     updateCartUI(); 
     updateWishlistUI();
 });
