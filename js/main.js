@@ -140,7 +140,7 @@ function updateCartUI() {
                         <img src="${item.image}" alt="${item.title}" class="cart-item-img">
                         <div class="cart-item-info">
                             <div class="cart-item-brand">${item.brand}</div>
-                            <div class="cart-item-title">${item.title} ${item.size ? `<strong style="color:var(--color-accent);">(Size: ${item.size})</strong>` : ''}</div>
+                            <div class="cart-item-title">${item.title} ${item.size ? `<strong style="color:var(--color-accent);">(Size: ${item.size})</strong>` : ''} ${item.color ? `<strong style="color:var(--color-accent);">(Color: ${item.color})</strong>` : ''}</div>
                             <div class="cart-item-price">EGP ${item.price}</div>
                             <span class="cart-item-remove" onclick="removeFromCart(${index})">Remove</span>
                         </div>
@@ -583,6 +583,20 @@ function loadProductDetails() {
         wishBtn.setAttribute('onclick', `toggleWishlist(event, ${product.id}, true)`);
     }
 
+    const addToCartBtn = document.getElementById('add-to-cart-btn');
+    if (addToCartBtn) {
+        addToCartBtn.setAttribute('onclick', `addToCart(${product.id})`);
+    }
+
+    let selectedSize = null;
+    let selectedColor = null;
+
+    const sizeEl = document.querySelector('.size-options .size-btn:not(.color-btn).active');
+    if (sizeEl) selectedSize = sizeEl.innerText.trim();
+
+    const colorEl = document.querySelector('#pd-color-options .color-btn.active');
+    if (colorEl) selectedColor = colorEl.innerText.trim();
+
     // Dynamic Size Selector
     const sizeSelector = document.querySelector('.size-selector');
     if (sizeSelector) {
@@ -637,6 +651,11 @@ function loadProductDetails() {
                     </button>
                 `;
             }).join('');
+            
+            // Set first color active by default
+            const firstColorBtn = colorOptions.querySelector('.color-btn');
+            if (firstColorBtn) firstColorBtn.classList.add('active');
+            
         } else {
             colorSelector.style.display = 'none';
         }
