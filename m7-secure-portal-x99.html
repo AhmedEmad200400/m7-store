@@ -379,8 +379,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js" defer></script>
 
 <!-- Custom JS -->
-<script src="js/main.js?v=37" defer></script>
+<script src="js/main.js?v=38" defer></script>
 <script>
+    let hasRunCompression = false;
     // Authentication Check on page load
     document.addEventListener('DOMContentLoaded', () => {
         checkAdminAuth();
@@ -451,6 +452,131 @@
         });
     });
 
+    function compressImageFile(file, maxWidth, maxHeight, quality) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = event => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    if (width > height) {
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+                    } else {
+                        if (height > maxHeight) {
+                            width = Math.round((width * maxHeight) / height);
+                            height = maxHeight;
+                        }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', quality));
+                };
+                img.onerror = error => reject(error);
+            };
+            reader.onerror = error => reject(error);
+        });
+    }
+
+    function compressBase64Image(base64Str, maxWidth, maxHeight, quality) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.src = base64Str;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height = Math.round((height * maxWidth) / width);
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width = Math.round((width * maxHeight) / height);
+                        height = maxHeight;
+                    }
+                }
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                resolve(canvas.toDataURL('image/jpeg', quality));
+            };
+            img.onerror = (err) => reject(err);
+        });
+    }
+
+    async function autoCompressExistingProducts() {
+        if (hasRunCompression || mockProducts.length === 0) return;
+        hasRunCompression = true;
+
+        console.log("Checking for products with uncompressed images...");
+        let updatedCount = 0;
+        
+        for (let prod of mockProducts) {
+            let needsUpdate = false;
+            let compressedImages = [];
+            let compressedMainImage = prod.image;
+            
+            // Helper to check if a string is a large base64 image (roughly > 100KB)
+            const isLargeBase64 = (str) => str && str.startsWith('data:image') && str.length > 150000;
+            
+            if (isLargeBase64(prod.image)) needsUpdate = true;
+            
+            if (prod.images && Array.isArray(prod.images)) {
+                for (let img of prod.images) {
+                    if (isLargeBase64(img)) needsUpdate = true;
+                }
+            }
+            
+            if (needsUpdate) {
+                console.log(`Compressing images for product: "${prod.title}" (ID: ${prod.id})...`);
+                try {
+                    if (isLargeBase64(prod.image)) {
+                        compressedMainImage = await compressBase64Image(prod.image, 800, 1000, 0.7);
+                    }
+                    
+                    if (prod.images && Array.isArray(prod.images)) {
+                        for (let img of prod.images) {
+                            if (isLargeBase64(img)) {
+                                compressedImages.push(await compressBase64Image(img, 800, 1000, 0.7));
+                            } else {
+                                compressedImages.push(img);
+                            }
+                        }
+                    }
+                    
+                    const updatedProd = {
+                        ...prod,
+                        image: compressedMainImage,
+                        images: compressedImages.length > 0 ? compressedImages : (prod.images || [compressedMainImage])
+                    };
+                    
+                    await window.db.ref('products/' + prod.id).set(updatedProd);
+                    updatedCount++;
+                    console.log(`Successfully compressed and updated: "${prod.title}"`);
+                } catch (err) {
+                    console.error(`Failed to compress product ${prod.id}:`, err);
+                }
+            }
+        }
+        
+        if (updatedCount > 0) {
+            console.log(`Database compression complete! Compressed ${updatedCount} products.`);
+        } else {
+            console.log("All database product images are already compressed.");
+        }
+    }
+
     async function handleAddProduct(event) {
         event.preventDefault();
         
@@ -478,12 +604,7 @@
             const maxFiles = Math.min(fileInput.files.length, 3);
             for (let i = 0; i < maxFiles; i++) {
                 const file = fileInput.files[i];
-                const base64 = await new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = e => resolve(e.target.result);
-                    reader.onerror = e => reject(e);
-                    reader.readAsDataURL(file);
-                });
+                const base64 = await compressImageFile(file, 800, 1000, 0.7);
                 images.push(base64);
             }
             mainImage = images[0];
@@ -678,6 +799,11 @@
 
             tbody.appendChild(tr);
         });
+
+        // Run background compression if logged in
+        if (localStorage.getItem('m7_admin_logged_in') === 'true') {
+            autoCompressExistingProducts();
+        }
     }
 
     function deleteProduct(id, title) {
